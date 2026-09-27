@@ -101,6 +101,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--parallel", action="store_true", default=True, help="Enable parallel test execution")
     p_run.add_argument("--fail-fast", action="store_true", default=True, help="Halt downstream dependents immediately upon upstream failure")
 
+    # quality
+    p_qual = subparsers.add_parser("quality", parents=[common_parser], help="Execute deterministic quality dimension validations (a11y, security, perf, ux)")
+    p_qual.add_argument("dimension", nargs="?", default="all", help="Target quality dimension: accessibility, security, performance, ux, all")
+    p_qual.add_argument("--dry-run", action="store_true", help="Simulate quality scan without invoking external tools")
+    p_qual.add_argument("--changed-only", action="store_true", help="Only run quality checks on impacted surfaces")
+    p_qual.add_argument("--full", action="store_true", help="Run comprehensive quality audit across all dimensions")
+    p_qual.add_argument("--release", action="store_true", help="Run strict release-level quality audit")
+
     # investigate
     p_inv = subparsers.add_parser("investigate", parents=[common_parser], help="Investigate and fingerprint recent failures")
     p_inv.add_argument("--fingerprint", help="Specific failure fingerprint to look up")
@@ -374,6 +382,52 @@ def main(args: Optional[List[str]] = None) -> int:
                 print(f"\nMachine-readable evidence report saved to: {engine.storage.get_artifact_path('report.json')}")
 
             return 0 if assessment.verdict in ("READY", "REQUIRES_REVIEW") else 1
+
+        elif parsed.command == "quality":
+            dim = getattr(parsed, "dimension", "all") or "all"
+            dry_run = getattr(parsed, "dry_run", False)
+            changed_only = getattr(parsed, "changed_only", False)
+            full_mode = getattr(parsed, "full", False)
+            release_mode = getattr(parsed, "release", False)
+
+            mode = "release" if release_mode else ("full" if full_mode else ("changed-only" if changed_only else "default"))
+
+            if not parsed.json:
+                print_banner()
+                print(f"[*] Aegis Quality Dimensions Engine [Target: {dim}] (mode: {mode}, dry-run: {dry_run})")
+
+            results = engine.execute_quality(
+                dimension=dim,
+                mode=mode,
+                dry_run=dry_run,
+            )
+
+            if parsed.json:
+                serialized = {k: v.model_dump() for k, v in results.items()}
+                print(json.dumps(serialized, indent=2))
+            else:
+                print("\n" + "=" * 60)
+                print("AEGIS QUALITY DIMENSIONS SUMMARY")
+                print("=" * 60)
+                for dimension_name, res in results.items():
+                    print(f"\n[+] Dimension: {dimension_name.upper()}")
+                    print(f"    - Status             : {res.status.value}")
+                    print(f"    - Execution Mode     : {res.execution_mode.value}")
+                    print(f"    - Validation Strength: {res.validation_strength.value}")
+                    print(f"    - Total Findings     : {len(res.findings)}")
+                    for f in res.findings[:5]:
+                        print(f"      • [{f.severity.value}] {f.title} ({f.affected_target})")
+                    if res.measurements:
+                        print(f"    - Measurements       : {len(res.measurements)}")
+                        for m in res.measurements:
+                            print(f"      • {m.metric}: {m.median:.2f} {m.unit} (p95: {m.p95:.2f} {m.unit})")
+                    if res.error_message:
+                        print(f"    - Diagnostic Note    : {res.error_message}")
+
+                print(f"\nMachine-readable quality results saved to: {engine.storage.get_artifact_path('quality-results.json')}")
+
+            any_failed = any(r.status.value in ("FAIL", "ERROR") for r in results.values())
+            return 1 if any_failed else 0
 
         elif parsed.command == "investigate":
             report_data = engine.storage.load_json("report.json")

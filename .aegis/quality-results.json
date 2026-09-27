@@ -1,0 +1,166 @@
+{
+  "accessibility": {
+    "dimension": "accessibility",
+    "runner_id": "aegis_accessibility_runner",
+    "status": "SIMULATED",
+    "execution_mode": "SIMULATED",
+    "validation_strength": "SIMULATED",
+    "findings": [
+      {
+        "finding_id": "a11y_color-contrast_4624",
+        "dimension": "accessibility",
+        "severity": "HIGH",
+        "category": "accessibility",
+        "title": "WCAG Violation: Ensure contrast ratio between foreground and background colors meets WCAG standards.",
+        "description": "Elements must meet minimum color contrast ratio thresholds (WCAG AA 4.5:1).",
+        "affected_target": "button.btn-primary",
+        "evidence": [
+          {
+            "evidence_id": "ev_a11y_color-contrast_4624",
+            "kind": "SIMULATED",
+            "description": "Element has insufficient color contrast of 2.1:1 (foreground: #888888, background: #eeeeee, font size: 12pt). Expected ratio of 4.5:1",
+            "raw_data": {
+              "html": "<button class=\"btn-primary\" style=\"color: #888; background: #eee;\">Submit</button>",
+              "tags": [
+                "wcag2aa",
+                "wcag143",
+                "cat.color"
+              ]
+            },
+            "artifact_ref": null,
+            "provenance": {
+              "rule_id": "color-contrast",
+              "target": "button.btn-primary",
+              "help_url": "https://dequeuniversity.com/rules/axe/4.8/color-contrast"
+            },
+            "timestamp": 1790509555.539693
+          }
+        ],
+        "provenance": {
+          "rule_id": "color-contrast",
+          "file_path": "/Users/apple/Ageis Agent",
+          "tags": [
+            "wcag2aa",
+            "wcag143",
+            "cat.color"
+          ],
+          "help_url": "https://dequeuniversity.com/rules/axe/4.8/color-contrast"
+        },
+        "confidence": 0.8,
+        "remediation_reference": "https://dequeuniversity.com/rules/axe/4.8/color-contrast",
+        "fingerprint": "qf_fed1cefc3c72066c",
+        "first_seen": 1790509555.539697,
+        "last_seen": 1790509555.539697,
+        "baseline_status": "REGRESSED",
+        "metadata": {}
+      },
+      {
+        "finding_id": "a11y_image-alt_1181",
+        "dimension": "accessibility",
+        "severity": "CRITICAL",
+        "category": "accessibility",
+        "title": "WCAG Violation: Images must have an alt attribute or aria-label.",
+        "description": "Elements must have alternate text or a role of none or presentation.",
+        "affected_target": "img.hero-banner",
+        "evidence": [
+          {
+            "evidence_id": "ev_a11y_image-alt_1181",
+            "kind": "SIMULATED",
+            "description": "Element does not have an alt attribute",
+            "raw_data": {
+              "html": "<img src=\"/static/hero.png\" class=\"hero-banner\" />",
+              "tags": [
+                "wcag2a",
+                "wcag111",
+                "cat.text-alternatives"
+              ]
+            },
+            "artifact_ref": null,
+            "provenance": {
+              "rule_id": "image-alt",
+              "target": "img.hero-banner",
+              "help_url": "https://dequeuniversity.com/rules/axe/4.8/image-alt"
+            },
+            "timestamp": 1790509555.539713
+          }
+        ],
+        "provenance": {
+          "rule_id": "image-alt",
+          "file_path": "/Users/apple/Ageis Agent",
+          "tags": [
+            "wcag2a",
+            "wcag111",
+            "cat.text-alternatives"
+          ],
+          "help_url": "https://dequeuniversity.com/rules/axe/4.8/image-alt"
+        },
+        "confidence": 0.8,
+        "remediation_reference": "https://dequeuniversity.com/rules/axe/4.8/image-alt",
+        "fingerprint": "qf_4e8ae4602555b3d6",
+        "first_seen": 1790509555.539715,
+        "last_seen": 1790509555.539716,
+        "baseline_status": "REGRESSED",
+        "metadata": {}
+      }
+    ],
+    "measurements": [],
+    "evidence": [
+      {
+        "evidence_id": "ev_a11y_color-contrast_4624",
+        "kind": "SIMULATED",
+        "description": "Element has insufficient color contrast of 2.1:1 (foreground: #888888, background: #eeeeee, font size: 12pt). Expected ratio of 4.5:1",
+        "raw_data": {
+          "html": "<button class=\"btn-primary\" style=\"color: #888; background: #eee;\">Submit</button>",
+          "tags": [
+            "wcag2aa",
+            "wcag143",
+            "cat.color"
+          ]
+        },
+        "artifact_ref": null,
+        "provenance": {
+          "rule_id": "color-contrast",
+          "target": "button.btn-primary",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.8/color-contrast"
+        },
+        "timestamp": 1790509555.539693
+      },
+      {
+        "evidence_id": "ev_a11y_image-alt_1181",
+        "kind": "SIMULATED",
+        "description": "Element does not have an alt attribute",
+        "raw_data": {
+          "html": "<img src=\"/static/hero.png\" class=\"hero-banner\" />",
+          "tags": [
+            "wcag2a",
+            "wcag111",
+            "cat.text-alternatives"
+          ]
+        },
+        "artifact_ref": null,
+        "provenance": {
+          "rule_id": "image-alt",
+          "target": "img.hero-banner",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.8/image-alt"
+        },
+        "timestamp": 1790509555.539713
+      }
+    ],
+    "confidence": 0.8,
+    "provenance": {},
+    "duration_ms": 0.09489059448242188,
+    "environment": {},
+    "tool_version": null,
+    "baseline_status": null,
+    "comparison_summary": {
+      "baseline_present": false,
+      "total_findings": 2,
+      "new_count": 0,
+      "regressed_count": 2,
+      "existing_count": 0,
+      "waived_count": 0,
+      "resolved_count": 0
+    },
+    "error_message": null
+  }
+}

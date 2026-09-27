@@ -94,6 +94,10 @@ class AegisEngine:
             max_workers=self.config.execution.max_workers,
         )
 
+        # Phase 4 Quality Dimensions Layer
+        from aegis.quality.registry import QualityRegistry
+        self.quality_registry = QualityRegistry(self.workspace_root)
+
     def _register_default_runners(self) -> None:
         """Registers all built-in universal test runners."""
         self.runner_registry.register(UniversalUnitRunner(self.workspace_root, executor=self.executor))
@@ -220,85 +224,85 @@ class AegisEngine:
 
         return report
 
-    def assess_release_readiness(self, report: EvidenceReport) -> ReleaseAssessment:
+    def plan_quality(self, mode: str = "default") -> QualityPlan:
+        """Generates an impact and risk-weighted quality dimensions plan."""
+        from aegis.quality.planner import QualityPlanner, QualityPlan
+        imp = self.analyze_impact()
+        risk = self.assess_risk(imp)
+        plan = QualityPlanner.plan(impact=imp, risk=risk, mode=mode)
+        if self.storage:
+            self.storage.save_json("quality-plan.json", plan.model_dump())
+        return plan
+
+    def execute_quality(
+        self,
+        dimension: Optional[str] = None,
+        mode: str = "default",
+        dry_run: bool = False,
+        options: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Executes targeted or full quality dimension evaluations."""
+        from aegis.quality.models import QualityDimension, QualityResult
+        opts = dict(options or {})
+        if dry_run:
+            opts["simulate"] = True
+            opts["dry_run"] = True
+
+        exec_context = ExecutionContext(
+            workspace_root=str(self.workspace_root),
+            dry_run=dry_run,
+            options=opts,
+        )
+
+        results: Dict[str, QualityResult] = {}
+        if dimension and dimension.lower() not in ("all", "quality"):
+            dim_enum = QualityDimension(dimension.lower())
+            res = self.quality_registry.execute_dimension(dim_enum, exec_context)
+            results[dim_enum.value] = res
+        else:
+            all_res = self.quality_registry.execute_all(exec_context)
+            results = {dim.value: res for dim, res in all_res.items()}
+
+        if self.storage:
+            serialized = {k: v.model_dump() for k, v in results.items()}
+            self.storage.save_json("quality-results.json", serialized)
+
+        return results
+
+    def assess_release_readiness(
+        self,
+        report: EvidenceReport,
+        quality_results: Optional[Dict[str, Any]] = None,
+    ) -> ReleaseAssessment:
         """
-        Evaluates release policies deterministically against the evidence report.
+        Evaluates release policies deterministically against the evidence report and quality dimensions.
         Strict policy verification: zero AI hallucinations allowed in gating.
         """
-        policy = self.config.release
-        checks: List[PolicyCheckResult] = []
-        reasons: List[str] = []
-        verdict = ReleaseGateVerdict.READY
+        from aegis.quality.gate import QualityPolicyEvaluator, QualityReleasePolicy
+        from aegis.quality.models import QualityResult
 
-        # 1. Critical test failures check
-        if policy.critical_tests_must_pass and report.failed > 0:
-            checks.append(
-                PolicyCheckResult(
-                    policy_name="critical_tests_must_pass",
-                    passed=False,
-                    details=f"{report.failed} test(s) failed during validation run.",
-                )
-            )
-            reasons.append(f"Blocked by {report.failed} failing test(s).")
-            verdict = ReleaseGateVerdict.BLOCKED
-        else:
-            checks.append(
-                PolicyCheckResult(
-                    policy_name="critical_tests_must_pass",
-                    passed=True,
-                    details="All executed tests passed successfully.",
-                )
-            )
+        q_res = quality_results
+        if q_res is None and self.storage:
+            stored_q = self.storage.load_json("quality-results.json")
+            if stored_q:
+                try:
+                    q_res = {k: QualityResult(**v) for k, v in stored_q.items()}
+                except Exception:
+                    q_res = None
 
-        # 2. Execution errors check
-        if report.errors > 0:
-            checks.append(
-                PolicyCheckResult(
-                    policy_name="zero_execution_errors",
-                    passed=False,
-                    details=f"{report.errors} test runner error(s) or timeout(s) detected.",
-                )
-            )
-            reasons.append(f"{report.errors} runner error(s) occurred.")
-            verdict = ReleaseGateVerdict.BLOCKED
-        else:
-            checks.append(
-                PolicyCheckResult(
-                    policy_name="zero_execution_errors",
-                    passed=True,
-                    details="Zero runner execution errors or timeouts.",
-                )
-            )
-
-        # 3. Human approval requirement flag
-        if policy.require_human_approval and verdict == ReleaseGateVerdict.READY:
-            checks.append(
-                PolicyCheckResult(
-                    policy_name="require_human_approval",
-                    passed=True,
-                    details="Release meets automated criteria; awaiting required human approval.",
-                )
-            )
-            verdict = ReleaseGateVerdict.REQUIRES_REVIEW
-            reasons.append("Automated policies passed. Requires final human confirmation per release policy.")
-
-        assessment = ReleaseAssessment(
-            verdict=verdict,
-            policy_checks=checks,
-            reasons=reasons,
-            total_tests=report.total_tests,
-            passed_tests=report.passed,
-            failed_tests=report.failed,
-            critical_failures=report.failed + report.errors,
-            security_vulnerabilities=0,
-            accessibility_score=1.0,
-            performance_regression_pct=0.0,
+        assessment = QualityPolicyEvaluator.evaluate(
+            report=report,
+            quality_results=q_res,
+            policy=QualityReleasePolicy(
+                require_real_execution=False if self.config.execution.dry_run else False,
+                require_human_approval=self.config.release.require_human_approval,
+            ),
         )
 
         self.event_bus.publish(
             ReleaseVerdictComputedEvent(
                 correlation_id=report.correlation_id,
-                payload={"verdict": verdict.value, "reasons": reasons},
+                payload={"verdict": assessment.verdict.value, "reasons": assessment.reasons},
             )
         )
 
