@@ -1,0 +1,13 @@
+{
+  "build_systems": [
+    {
+      "name": "go modules",
+      "manifest_file": "go.mod",
+      "lock_file": null,
+      "default_build_cmd": "go build ./...",
+      "default_test_cmd": "go test -v ./..."
+    }
+  ],
+  "databases": [],
+  "queues": []
+}

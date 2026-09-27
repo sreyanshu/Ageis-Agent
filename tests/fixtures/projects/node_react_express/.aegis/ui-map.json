@@ -1,0 +1,6 @@
+{
+  "has_frontend": true,
+  "ui_frameworks": [
+    "React"
+  ]
+}

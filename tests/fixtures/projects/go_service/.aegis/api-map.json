@@ -1,0 +1,9 @@
+{
+  "has_openapi": false,
+  "openapi_specs": [],
+  "has_graphql": false,
+  "graphql_schemas": [],
+  "has_grpc": false,
+  "proto_files": [],
+  "endpoints": []
+}

@@ -1,0 +1,44 @@
+project:
+  name: auto-detected
+  root_path: /Users/apple/Ageis Agent
+  environment: development
+execution:
+  parallel: true
+  max_workers: 4
+  timeout_seconds: 300
+  dry_run: false
+  safe_mode: true
+testing:
+  unit: auto
+  api: auto
+  sanity: auto
+  integration: auto
+  e2e: auto
+  ui: auto
+  ux: auto
+  accessibility: auto
+  security: auto
+  performance: auto
+  compatibility: adaptive
+ai:
+  enabled: false
+  provider: none
+  model: ''
+  max_tokens: 4096
+  budget_usd: 1.0
+  escalation: true
+agent:
+  autonomous: false
+  max_iterations: 3
+  max_patch_attempts: 2
+  max_runtime_minutes: 10
+release:
+  critical_tests_must_pass: true
+  critical_security_findings: 0
+  accessibility_threshold: 0.95
+  performance_regression_percent: 10.0
+  production_build_required: true
+  require_human_approval: true
+storage:
+  dir_name: .aegis
+  artifact_retention_days: 30

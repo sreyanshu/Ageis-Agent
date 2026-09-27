@@ -1,0 +1,40 @@
+{
+  "project_name": "go_service",
+  "primary_language": "Go",
+  "languages": [
+    {
+      "name": "Go",
+      "extensions": [
+        ".go"
+      ],
+      "file_count": 2,
+      "percentage": 100.0,
+      "version_hint": "1.22.0",
+      "primary": true
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "Gin",
+      "category": "backend",
+      "confidence": 1.0,
+      "version": null,
+      "manifest_source": "go.mod"
+    }
+  ],
+  "infrastructure": {
+    "has_docker": true,
+    "dockerfiles": [
+      "Dockerfile"
+    ],
+    "has_compose": false,
+    "compose_files": [],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [],
+    "detected_databases": [],
+    "detected_queues": []
+  }
+}

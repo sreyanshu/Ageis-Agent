@@ -1,0 +1,16 @@
+{
+  "test_suites": [
+    {
+      "framework": "go test",
+      "runner_cmd": "go test -v ./...",
+      "test_files": [
+        "service_test.go"
+      ],
+      "test_count_estimate": 1,
+      "test_dirs": [
+        "."
+      ]
+    }
+  ],
+  "total_estimated_tests": 1
+}

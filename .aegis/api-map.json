@@ -1,0 +1,52 @@
+{
+  "has_openapi": false,
+  "openapi_specs": [],
+  "has_graphql": false,
+  "graphql_schemas": [],
+  "has_grpc": false,
+  "proto_files": [],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/path",
+      "source_file": "aegis/discovery/interfaces.py",
+      "line_number": 96,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+      "line_number": 5,
+      "handler_name": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+      "line_number": 9,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/items",
+      "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+      "line_number": 15,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "source_file": "tests/fixtures/projects/node_react_express/server.js",
+      "line_number": 5,
+      "handler_name": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "source_file": "tests/fixtures/projects/node_react_express/server.js",
+      "line_number": 9,
+      "handler_name": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "has_openapi": false,
+  "openapi_specs": [],
+  "has_graphql": false,
+  "graphql_schemas": [],
+  "has_grpc": false,
+  "proto_files": [],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "source_file": "app/main.py",
+      "line_number": 5,
+      "handler_name": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "source_file": "app/main.py",
+      "line_number": 9,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/items",
+      "source_file": "app/main.py",
+      "line_number": 15,
+      "handler_name": null
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "project_name": "go_service",
+  "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/go_service",
+  "discovered_at": 1790507449.469472,
+  "tree_hash": "61c3d486fdfed02b9a5e2790f4218ae99c8410028183d09a70fb7f4f0e97efa0",
+  "languages": [
+    {
+      "name": "Go",
+      "extensions": [
+        ".go"
+      ],
+      "file_count": 2,
+      "percentage": 100.0,
+      "version_hint": "1.22.0",
+      "primary": true
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "Gin",
+      "category": "backend",
+      "confidence": 1.0,
+      "version": null,
+      "manifest_source": "go.mod"
+    }
+  ],
+  "build_systems": [
+    {
+      "name": "go modules",
+      "manifest_file": "go.mod",
+      "lock_file": null,
+      "default_build_cmd": "go build ./...",
+      "default_test_cmd": "go test -v ./..."
+    }
+  ],
+  "infrastructure": {
+    "has_docker": true,
+    "dockerfiles": [
+      "Dockerfile"
+    ],
+    "has_compose": false,
+    "compose_files": [],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [],
+    "detected_databases": [],
+    "detected_queues": []
+  },
+  "interfaces": {
+    "has_openapi": false,
+    "openapi_specs": [],
+    "has_graphql": false,
+    "graphql_schemas": [],
+    "has_grpc": false,
+    "proto_files": [],
+    "has_cli": false,
+    "rest_endpoints": [],
+    "database_models": []
+  },
+  "test_suites": [
+    {
+      "framework": "go test",
+      "runner_cmd": "go test -v ./...",
+      "test_files": [
+        "service_test.go"
+      ],
+      "test_count_estimate": 1,
+      "test_dirs": [
+        "."
+      ]
+    }
+  ],
+  "metadata": {
+    "total_languages": 1,
+    "total_frameworks": 1,
+    "total_test_suites": 1
+  }
+}

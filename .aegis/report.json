@@ -1,0 +1,90 @@
+{
+  "report_id": "rep_1790507458748_72bebe54",
+  "correlation_id": "corr_1790507458747_ca57ee06",
+  "project_name": "Ageis Agent",
+  "created_at": 1790507458.748377,
+  "tree_hash": "f687ade8ccb24367b26031a554a22c03e35c3026eaa02ceaeee3b32b56b4c410",
+  "total_tests": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "errors": 0,
+  "duration_ms": 0.0,
+  "test_results": [
+    {
+      "test_id": "pytest.suite",
+      "name": "pytest Test Suite",
+      "suite": "default",
+      "category": "unit",
+      "status": "PASSED",
+      "duration_ms": 0.0,
+      "runner": "pytest",
+      "failure_fingerprint": null,
+      "normalized_error": null,
+      "raw_stdout": "[DRY_RUN] Simulated execution: pytest in /Users/apple/Ageis Agent",
+      "raw_stderr": "",
+      "artifacts": [
+        {
+          "kind": "stdout",
+          "path": "artifacts/pytest_suite_stdout.log",
+          "size_bytes": 65,
+          "mime_type": "text/plain"
+        }
+      ],
+      "confidence": 1.0,
+      "deterministic_verdict": true,
+      "metadata": {}
+    },
+    {
+      "test_id": "jest.suite",
+      "name": "jest Test Suite",
+      "suite": "default",
+      "category": "unit",
+      "status": "PASSED",
+      "duration_ms": 0.0,
+      "runner": "jest",
+      "failure_fingerprint": null,
+      "normalized_error": null,
+      "raw_stdout": "[DRY_RUN] Simulated execution: npm test in /Users/apple/Ageis Agent",
+      "raw_stderr": "",
+      "artifacts": [
+        {
+          "kind": "stdout",
+          "path": "artifacts/jest_suite_stdout.log",
+          "size_bytes": 67,
+          "mime_type": "text/plain"
+        }
+      ],
+      "confidence": 1.0,
+      "deterministic_verdict": true,
+      "metadata": {}
+    },
+    {
+      "test_id": "go test.suite",
+      "name": "go test Test Suite",
+      "suite": "default",
+      "category": "unit",
+      "status": "PASSED",
+      "duration_ms": 0.0,
+      "runner": "go test",
+      "failure_fingerprint": null,
+      "normalized_error": null,
+      "raw_stdout": "[DRY_RUN] Simulated execution: go test -v ./... in /Users/apple/Ageis Agent",
+      "raw_stderr": "",
+      "artifacts": [
+        {
+          "kind": "stdout",
+          "path": "artifacts/go_test_suite_stdout.log",
+          "size_bytes": 75,
+          "mime_type": "text/plain"
+        }
+      ],
+      "confidence": 1.0,
+      "deterministic_verdict": true,
+      "metadata": {}
+    }
+  ],
+  "failure_fingerprints": [],
+  "release_assessment": null,
+  "metadata": {}
+}

@@ -1,0 +1,63 @@
+{
+  "project_name": "node_react_express",
+  "primary_language": "JavaScript",
+  "languages": [
+    {
+      "name": "JavaScript",
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ],
+      "file_count": 2,
+      "percentage": 66.67,
+      "version_hint": ">=18.0.0",
+      "primary": true
+    },
+    {
+      "name": "TypeScript",
+      "extensions": [
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts"
+      ],
+      "file_count": 1,
+      "percentage": 33.33,
+      "version_hint": ">=18.0.0",
+      "primary": false
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "React",
+      "category": "frontend",
+      "confidence": 1.0,
+      "version": "^18.2.0",
+      "manifest_source": "package.json"
+    },
+    {
+      "name": "Express",
+      "category": "backend",
+      "confidence": 1.0,
+      "version": "^4.19.2",
+      "manifest_source": "package.json"
+    }
+  ],
+  "infrastructure": {
+    "has_docker": false,
+    "dockerfiles": [],
+    "has_compose": false,
+    "compose_files": [],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [
+      "github-actions"
+    ],
+    "detected_databases": [],
+    "detected_queues": []
+  }
+}

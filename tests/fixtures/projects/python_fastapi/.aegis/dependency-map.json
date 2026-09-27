@@ -1,0 +1,18 @@
+{
+  "build_systems": [
+    {
+      "name": "poetry",
+      "manifest_file": "pyproject.toml",
+      "lock_file": null,
+      "default_build_cmd": "poetry build",
+      "default_test_cmd": "poetry run pytest"
+    }
+  ],
+  "databases": [
+    "PostgreSQL",
+    "Redis"
+  ],
+  "queues": [
+    "Redis"
+  ]
+}

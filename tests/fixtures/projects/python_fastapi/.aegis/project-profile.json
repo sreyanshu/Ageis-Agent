@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "project_name": "fastapi-test",
+  "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/python_fastapi",
+  "discovered_at": 1790507449.46425,
+  "tree_hash": "40a04e5258f3744bce3feda476da7fbbf92b98c24caba764ba806d404aff32ba",
+  "languages": [
+    {
+      "name": "Python",
+      "extensions": [
+        ".py",
+        ".pyw",
+        ".pyi"
+      ],
+      "file_count": 2,
+      "percentage": 100.0,
+      "version_hint": "^3.11",
+      "primary": true
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "FastAPI",
+      "category": "backend",
+      "confidence": 1.0,
+      "version": null,
+      "manifest_source": "pyproject.toml"
+    }
+  ],
+  "build_systems": [
+    {
+      "name": "poetry",
+      "manifest_file": "pyproject.toml",
+      "lock_file": null,
+      "default_build_cmd": "poetry build",
+      "default_test_cmd": "poetry run pytest"
+    }
+  ],
+  "infrastructure": {
+    "has_docker": true,
+    "dockerfiles": [
+      "Dockerfile"
+    ],
+    "has_compose": true,
+    "compose_files": [
+      "docker-compose.yml"
+    ],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [],
+    "detected_databases": [
+      "PostgreSQL",
+      "Redis"
+    ],
+    "detected_queues": [
+      "Redis"
+    ]
+  },
+  "interfaces": {
+    "has_openapi": false,
+    "openapi_specs": [],
+    "has_graphql": false,
+    "graphql_schemas": [],
+    "has_grpc": false,
+    "proto_files": [],
+    "has_cli": false,
+    "rest_endpoints": [
+      {
+        "method": "GET",
+        "path": "/health",
+        "source_file": "app/main.py",
+        "line_number": 5,
+        "handler_name": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "source_file": "app/main.py",
+        "line_number": 9,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/items",
+        "source_file": "app/main.py",
+        "line_number": 15,
+        "handler_name": null
+      }
+    ],
+    "database_models": []
+  },
+  "test_suites": [
+    {
+      "framework": "pytest",
+      "runner_cmd": "pytest",
+      "test_files": [
+        "tests/test_api.py"
+      ],
+      "test_count_estimate": 3,
+      "test_dirs": [
+        "tests"
+      ]
+    }
+  ],
+  "metadata": {
+    "total_languages": 1,
+    "total_frameworks": 1,
+    "total_test_suites": 1
+  }
+}

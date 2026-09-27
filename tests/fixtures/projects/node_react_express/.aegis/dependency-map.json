@@ -1,0 +1,13 @@
+{
+  "build_systems": [
+    {
+      "name": "npm",
+      "manifest_file": "package.json",
+      "lock_file": null,
+      "default_build_cmd": "npm run build",
+      "default_test_cmd": "npm test"
+    }
+  ],
+  "databases": [],
+  "queues": []
+}

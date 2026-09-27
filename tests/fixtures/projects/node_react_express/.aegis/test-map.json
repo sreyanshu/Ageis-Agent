@@ -1,0 +1,16 @@
+{
+  "test_suites": [
+    {
+      "framework": "jest",
+      "runner_cmd": "npm test",
+      "test_files": [
+        "tests/server.spec.js"
+      ],
+      "test_count_estimate": 2,
+      "test_dirs": [
+        "tests"
+      ]
+    }
+  ],
+  "total_estimated_tests": 2
+}

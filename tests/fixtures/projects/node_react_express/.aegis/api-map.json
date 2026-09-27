@@ -1,0 +1,24 @@
+{
+  "has_openapi": false,
+  "openapi_specs": [],
+  "has_graphql": false,
+  "graphql_schemas": [],
+  "has_grpc": false,
+  "proto_files": [],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "source_file": "server.js",
+      "line_number": 5,
+      "handler_name": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "source_file": "server.js",
+      "line_number": 9,
+      "handler_name": null
+    }
+  ]
+}

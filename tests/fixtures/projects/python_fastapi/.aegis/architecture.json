@@ -1,0 +1,49 @@
+{
+  "project_name": "fastapi-test",
+  "primary_language": "Python",
+  "languages": [
+    {
+      "name": "Python",
+      "extensions": [
+        ".py",
+        ".pyw",
+        ".pyi"
+      ],
+      "file_count": 2,
+      "percentage": 100.0,
+      "version_hint": "^3.11",
+      "primary": true
+    }
+  ],
+  "frameworks": [
+    {
+      "name": "FastAPI",
+      "category": "backend",
+      "confidence": 1.0,
+      "version": null,
+      "manifest_source": "pyproject.toml"
+    }
+  ],
+  "infrastructure": {
+    "has_docker": true,
+    "dockerfiles": [
+      "Dockerfile"
+    ],
+    "has_compose": true,
+    "compose_files": [
+      "docker-compose.yml"
+    ],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [],
+    "detected_databases": [
+      "PostgreSQL",
+      "Redis"
+    ],
+    "detected_queues": [
+      "Redis"
+    ]
+  }
+}

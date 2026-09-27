@@ -1,0 +1,46 @@
+{
+  "test_suites": [
+    {
+      "framework": "pytest",
+      "runner_cmd": "pytest",
+      "test_files": [
+        "tests/fixtures/projects/python_fastapi/tests/test_api.py",
+        "tests/test_cli.py",
+        "tests/test_config.py",
+        "tests/test_discovery.py",
+        "tests/test_evidence.py",
+        "tests/test_executor.py",
+        "tests/test_hashing.py",
+        "tests/test_orchestrator.py"
+      ],
+      "test_count_estimate": 23,
+      "test_dirs": [
+        "tests",
+        "tests/fixtures/projects/python_fastapi/tests"
+      ]
+    },
+    {
+      "framework": "jest",
+      "runner_cmd": "npm test",
+      "test_files": [
+        "tests/fixtures/projects/node_react_express/tests/server.spec.js"
+      ],
+      "test_count_estimate": 2,
+      "test_dirs": [
+        "tests/fixtures/projects/node_react_express/tests"
+      ]
+    },
+    {
+      "framework": "go test",
+      "runner_cmd": "go test -v ./...",
+      "test_files": [
+        "tests/fixtures/projects/go_service/service_test.go"
+      ],
+      "test_count_estimate": 1,
+      "test_dirs": [
+        "tests/fixtures/projects/go_service"
+      ]
+    }
+  ],
+  "total_estimated_tests": 26
+}

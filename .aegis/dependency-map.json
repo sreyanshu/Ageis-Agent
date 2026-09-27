@@ -1,0 +1,18 @@
+{
+  "build_systems": [
+    {
+      "name": "pip/pyproject",
+      "manifest_file": "pyproject.toml",
+      "lock_file": null,
+      "default_build_cmd": "python -m build",
+      "default_test_cmd": "pytest"
+    }
+  ],
+  "databases": [
+    "PostgreSQL",
+    "Redis"
+  ],
+  "queues": [
+    "Redis"
+  ]
+}

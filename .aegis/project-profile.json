@@ -1,0 +1,220 @@
+{
+  "schema_version": "1.0.0",
+  "project_name": "Ageis Agent",
+  "root_path": "/Users/apple/Ageis Agent",
+  "discovered_at": 1790507458.74472,
+  "tree_hash": "f687ade8ccb24367b26031a554a22c03e35c3026eaa02ceaeee3b32b56b4c410",
+  "languages": [
+    {
+      "name": "Python",
+      "extensions": [
+        ".py",
+        ".pyw",
+        ".pyi"
+      ],
+      "file_count": 30,
+      "percentage": 85.71,
+      "version_hint": ">=3.9",
+      "primary": true
+    },
+    {
+      "name": "JavaScript",
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ],
+      "file_count": 2,
+      "percentage": 5.71,
+      "version_hint": null,
+      "primary": false
+    },
+    {
+      "name": "Go",
+      "extensions": [
+        ".go"
+      ],
+      "file_count": 2,
+      "percentage": 5.71,
+      "version_hint": null,
+      "primary": false
+    },
+    {
+      "name": "TypeScript",
+      "extensions": [
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts"
+      ],
+      "file_count": 1,
+      "percentage": 2.86,
+      "version_hint": null,
+      "primary": false
+    }
+  ],
+  "frameworks": [],
+  "build_systems": [
+    {
+      "name": "pip/pyproject",
+      "manifest_file": "pyproject.toml",
+      "lock_file": null,
+      "default_build_cmd": "python -m build",
+      "default_test_cmd": "pytest"
+    }
+  ],
+  "infrastructure": {
+    "has_docker": true,
+    "dockerfiles": [
+      "tests/fixtures/projects/go_service/Dockerfile",
+      "tests/fixtures/projects/python_fastapi/Dockerfile"
+    ],
+    "has_compose": true,
+    "compose_files": [
+      "tests/fixtures/projects/python_fastapi/docker-compose.yml"
+    ],
+    "has_kubernetes": false,
+    "k8s_manifests": [],
+    "has_terraform": false,
+    "terraform_files": [],
+    "ci_providers": [],
+    "detected_databases": [
+      "PostgreSQL",
+      "Redis"
+    ],
+    "detected_queues": [
+      "Redis"
+    ]
+  },
+  "interfaces": {
+    "has_openapi": false,
+    "openapi_specs": [],
+    "has_graphql": false,
+    "graphql_schemas": [],
+    "has_grpc": false,
+    "proto_files": [],
+    "has_cli": false,
+    "rest_endpoints": [
+      {
+        "method": "GET",
+        "path": "/path",
+        "source_file": "aegis/discovery/interfaces.py",
+        "line_number": 96,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+        "line_number": 5,
+        "handler_name": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+        "line_number": 9,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/items",
+        "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
+        "line_number": 15,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "source_file": "tests/fixtures/projects/node_react_express/server.js",
+        "line_number": 5,
+        "handler_name": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/users",
+        "source_file": "tests/fixtures/projects/node_react_express/server.js",
+        "line_number": 9,
+        "handler_name": null
+      }
+    ],
+    "database_models": [
+      "AIConfig",
+      "AegisConfig",
+      "AgentConfig",
+      "ArtifactRef",
+      "BuildSystemInfo",
+      "ChangeSet",
+      "EndpointInfo",
+      "Event",
+      "EvidenceReport",
+      "ExecutionConfig",
+      "ExecutionResult",
+      "FrameworkInfo",
+      "InfrastructureInfo",
+      "InterfaceMap",
+      "LanguageInfo",
+      "NormalizedError",
+      "PolicyCheckResult",
+      "ProjectConfig",
+      "ProjectProfile",
+      "ReleaseAssessment",
+      "ReleasePolicyConfig",
+      "RunnerCapability",
+      "StorageConfig",
+      "TestResult",
+      "TestSuiteInfo",
+      "TestingConfig",
+      "User"
+    ]
+  },
+  "test_suites": [
+    {
+      "framework": "pytest",
+      "runner_cmd": "pytest",
+      "test_files": [
+        "tests/fixtures/projects/python_fastapi/tests/test_api.py",
+        "tests/test_cli.py",
+        "tests/test_config.py",
+        "tests/test_discovery.py",
+        "tests/test_evidence.py",
+        "tests/test_executor.py",
+        "tests/test_hashing.py",
+        "tests/test_orchestrator.py"
+      ],
+      "test_count_estimate": 23,
+      "test_dirs": [
+        "tests",
+        "tests/fixtures/projects/python_fastapi/tests"
+      ]
+    },
+    {
+      "framework": "jest",
+      "runner_cmd": "npm test",
+      "test_files": [
+        "tests/fixtures/projects/node_react_express/tests/server.spec.js"
+      ],
+      "test_count_estimate": 2,
+      "test_dirs": [
+        "tests/fixtures/projects/node_react_express/tests"
+      ]
+    },
+    {
+      "framework": "go test",
+      "runner_cmd": "go test -v ./...",
+      "test_files": [
+        "tests/fixtures/projects/go_service/service_test.go"
+      ],
+      "test_count_estimate": 1,
+      "test_dirs": [
+        "tests/fixtures/projects/go_service"
+      ]
+    }
+  ],
+  "metadata": {
+    "total_languages": 4,
+    "total_frameworks": 0,
+    "total_test_suites": 3
+  }
+}
