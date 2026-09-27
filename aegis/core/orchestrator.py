@@ -98,6 +98,12 @@ class AegisEngine:
         from aegis.quality.registry import QualityRegistry
         self.quality_registry = QualityRegistry(self.workspace_root)
 
+        # Phase 5 Historical Intelligence Layer
+        from aegis.history.store import HistoryStore
+        from aegis.history.failures import FailureIntelligenceEngine
+        self.history_store = HistoryStore(self.workspace_root / self.config.storage.dir_name / "history")
+        self.failure_intelligence = FailureIntelligenceEngine(self.history_store)
+
     def _register_default_runners(self) -> None:
         """Registers all built-in universal test runners."""
         self.runner_registry.register(UniversalUnitRunner(self.workspace_root, executor=self.executor))
@@ -158,8 +164,8 @@ class AegisEngine:
             self.storage.save_json("risk-assessment.json", assessment.model_dump())
         return assessment
 
-    def plan_tests(self, changed_only: bool = False) -> TestPlan:
-        """Generates an adaptive test plan based on impact and risk analysis."""
+    def plan_tests(self, changed_only: bool = False, explain: bool = False) -> TestPlan:
+        """Generates an adaptive test plan based on impact, risk analysis, and historical intelligence."""
         profile = self.discover()
         imp = self.analyze_impact()
         risk = self.assess_risk(imp)
@@ -168,6 +174,8 @@ class AegisEngine:
             risk=risk,
             available_suites=profile.test_suites,
             changed_only=changed_only,
+            history_store=self.history_store,
+            explain=explain,
         )
         if self.storage:
             self.storage.save_json("test-plan.json", plan.model_dump())
@@ -183,7 +191,7 @@ class AegisEngine:
     ) -> EvidenceReport:
         """
         Builds the execution DAG from the test plan and runs all stages via the DAGScheduler.
-        Records machine-verifiable evidence and updates release readiness assessment.
+        Records machine-verifiable evidence, tracks historical intelligence, and updates release readiness assessment.
         """
         profile = self.discover()
         plan = test_plan or self.plan_tests()
@@ -217,6 +225,57 @@ class AegisEngine:
         report = collector.generate_report(tree_hash=profile.tree_hash)
         assessment = self.assess_release_readiness(report)
         report.release_assessment = assessment
+
+        # Record Execution History & Failure Intelligence
+        from aegis.history.models import ExecutionRecord
+        from aegis.history.correlations import CorrelationEngine
+        correlator = CorrelationEngine(self.history_store)
+        changed_syms = [s.name for s in plan.metadata.get("changed_symbols", [])]
+
+        history_records: List[ExecutionRecord] = []
+        for res in report.test_results:
+            cat_enum = None
+            fp = res.failure_fingerprint
+            if res.status in (TestStatus.FAILED, TestStatus.ERROR, TestStatus.TIMEOUT):
+                cluster = self.failure_intelligence.process_failure(
+                    test_id=res.test_id,
+                    exception_type=res.normalized_error.exception_type if res.normalized_error else "TestFailure",
+                    message=res.normalized_error.message if res.normalized_error else (res.raw_stderr or res.raw_stdout or "Failure"),
+                    top_stack_frame=res.normalized_error.top_stack_frame if res.normalized_error else None,
+                    raw_stderr=res.raw_stderr,
+                )
+                cat_enum = cluster.classification
+                fp = cluster.fingerprint
+
+                for sym in changed_syms:
+                    correlator.record_change_failure_link(
+                        symbol_name=sym,
+                        file_path="workspace",
+                        failure_fingerprint=fp,
+                        test_id=res.test_id,
+                    )
+
+            rec = ExecutionRecord(
+                execution_id=generate_id("exec"),
+                run_id=report.report_id,
+                timestamp=report.created_at,
+                project_name=report.project_name,
+                commit_or_tree_hash=report.tree_hash,
+                test_id=res.test_id,
+                category=res.category,
+                status=res.status.value,
+                duration_ms=res.duration_ms,
+                retry_count=res.metadata.get("retries", 0),
+                execution_mode="SIMULATED" if dry_run else "REAL",
+                failure_fingerprint=fp,
+                failure_category=cat_enum,
+                risk_level=plan.risk_level.value,
+                affected_symbols=changed_syms,
+                metadata=res.metadata,
+            )
+            history_records.append(rec)
+
+        self.history_store.record_executions(history_records)
 
         if self.storage:
             self.storage.save_json("report.json", report.model_dump())

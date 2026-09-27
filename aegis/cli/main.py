@@ -71,9 +71,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_disc = subparsers.add_parser("discover", parents=[common_parser], help="Discover languages, frameworks, build tools, infra, APIs, and tests")
     p_disc.add_argument("--name", help="Custom project name override")
 
-    # analyze
-    p_ana = subparsers.add_parser("analyze", parents=[common_parser], help="Perform static architecture and dependency analysis")
-
     # impact
     p_imp = subparsers.add_parser("impact", parents=[common_parser], help="Detect changed symbols and compute downstream blast radius")
     p_imp.add_argument("--depth", type=int, default=5, help="Max traversal depth")
@@ -84,12 +81,14 @@ def build_parser() -> argparse.ArgumentParser:
     # plan
     p_plan = subparsers.add_parser("plan", parents=[common_parser], help="Generate adaptive, risk-weighted test plan")
     p_plan.add_argument("--changed-only", action="store_true", help="Only plan tests for impacted code")
+    p_plan.add_argument("--explain", action="store_true", help="Include detailed explanation for selected and skipped tests")
 
     # test
     p_test = subparsers.add_parser("test", parents=[common_parser], help="Execute deterministic quality validations")
     p_test.add_argument("category", nargs="?", default="all", help="Test category: unit, api, sanity, integration, e2e, ui, security, performance, compatibility, all")
     p_test.add_argument("--dry-run", action="store_true", help="Simulate execution without running commands")
     p_test.add_argument("--changed-only", action="store_true", help="Only run tests impacted by recent changes")
+    p_test.add_argument("--explain-selection", action="store_true", help="Print detailed selection rationale")
     p_test.add_argument("--parallel", action="store_true", default=True, help="Enable parallel test execution")
     p_test.add_argument("--fail-fast", action="store_true", default=True, help="Halt downstream dependents immediately upon upstream failure")
     p_test.add_argument("--ci", action="store_true", help="Run in strict CI mode")
@@ -106,8 +105,19 @@ def build_parser() -> argparse.ArgumentParser:
     p_qual.add_argument("dimension", nargs="?", default="all", help="Target quality dimension: accessibility, security, performance, ux, all")
     p_qual.add_argument("--dry-run", action="store_true", help="Simulate quality scan without invoking external tools")
     p_qual.add_argument("--changed-only", action="store_true", help="Only run quality checks on impacted surfaces")
+    p_qual.add_argument("--explain-selection", action="store_true", help="Print detailed quality selection rationale")
     p_qual.add_argument("--full", action="store_true", help="Run comprehensive quality audit across all dimensions")
     p_qual.add_argument("--release", action="store_true", help="Run strict release-level quality audit")
+
+    # history
+    p_hist = subparsers.add_parser("history", parents=[common_parser], help="Inspect historical execution records, failures, and flakiness")
+    p_hist.add_argument("action", nargs="?", default="all", help="History view: failures, tests, quality, flaky, all")
+    p_hist.add_argument("--limit", type=int, default=50, help="Maximum historical records to retrieve")
+
+    # analyze
+    p_ana_hist = subparsers.add_parser("analyze", parents=[common_parser], help="Analyze test effectiveness, redundancy, failure clusters, and risk")
+    p_ana_hist.add_argument("action", nargs="?", default="effectiveness", help="Analysis target: failures, effectiveness, redundancy, risk")
+    p_ana_hist.add_argument("--limit", type=int, default=50, help="Maximum items to analyze")
 
     # investigate
     p_inv = subparsers.add_parser("investigate", parents=[common_parser], help="Investigate and fingerprint recent failures")
@@ -181,24 +191,6 @@ def main(args: Optional[List[str]] = None) -> int:
                     print(f"    - {ts.framework:<12} ~{ts.test_count_estimate} tests across {len(ts.test_files)} files")
 
                 print(f"\n[+] Stored machine-readable profile in: {workspace_path / '.aegis' / 'project-profile.json'}")
-            return 0
-
-        elif parsed.command == "analyze":
-            profile = engine.discover()
-            if parsed.json:
-                print(json.dumps({
-                    "project_name": profile.project_name,
-                    "architecture": profile.infrastructure.model_dump(),
-                    "interfaces": profile.interfaces.model_dump(),
-                }, indent=2))
-            else:
-                print_banner()
-                print(f"[*] Static Analysis for: {profile.project_name}")
-                print(f"    - Docker: {profile.infrastructure.has_docker} ({len(profile.infrastructure.dockerfiles)} dockerfiles)")
-                print(f"    - Compose: {profile.infrastructure.has_compose} ({len(profile.infrastructure.compose_files)} files)")
-                print(f"    - Databases: {', '.join(profile.infrastructure.detected_databases) or 'None detected'}")
-                print(f"    - CI/CD: {', '.join(profile.infrastructure.ci_providers) or 'None detected'}")
-                print(f"    - Discovered REST Endpoints: {len(profile.interfaces.rest_endpoints)}")
             return 0
 
         elif parsed.command == "graph":
@@ -325,7 +317,8 @@ def main(args: Optional[List[str]] = None) -> int:
 
         elif parsed.command == "plan":
             changed_only = getattr(parsed, "changed_only", False)
-            plan = engine.plan_tests(changed_only=changed_only)
+            explain = getattr(parsed, "explain", False)
+            plan = engine.plan_tests(changed_only=changed_only, explain=explain)
             if parsed.json:
                 print(plan.model_dump_json(indent=2))
             else:
@@ -338,6 +331,15 @@ def main(args: Optional[List[str]] = None) -> int:
                     print(f"    - Safely Skipped Suites: {plan.total_skipped}")
                     for s in plan.skipped_tests:
                         print(f"      [SKIP] [{s.category}] -> {s.name} ({s.skip_reason})")
+                if explain and plan.explanations:
+                    print("\n[+] Selection Explanations (Adaptive Planner 2.0):")
+                    for exp in plan.explanations:
+                        icon = "[✓ SELECTED]" if exp.selected else "[✗ SKIPPED]"
+                        print(f"    {icon} {exp.test_id} (Value Score: {exp.value_score})")
+                        for r in exp.reasons:
+                            print(f"        • {r}")
+                        if exp.skip_reason:
+                            print(f"        • {exp.skip_reason}")
                 print(f"    - Est. Execution Time  : {plan.estimated_total_time_ms:.1f} ms")
             return 0
 
@@ -428,6 +430,120 @@ def main(args: Optional[List[str]] = None) -> int:
 
             any_failed = any(r.status.value in ("FAIL", "ERROR") for r in results.values())
             return 1 if any_failed else 0
+
+        elif parsed.command == "history":
+            act = getattr(parsed, "action", "all") or "all"
+            limit = getattr(parsed, "limit", 50)
+            from aegis.history.flakiness import FlakinessEngine
+
+            if act == "failures":
+                clusters = engine.history_store.get_failure_clusters(limit=limit)
+                if parsed.json:
+                    print(json.dumps([c.model_dump() for c in clusters], indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Historical Failure Clusters ({len(clusters)} recorded):")
+                    for c in clusters:
+                        print(f"    • [{c.status.value}] {c.fingerprint} (x{c.occurrences}) -> {c.classification.value} ({c.sample_message[:60]})")
+            elif act == "flaky":
+                flakiness_eng = FlakinessEngine(engine.history_store)
+                flaky_map = flakiness_eng.analyze_all(limit_per_test=limit)
+                if parsed.json:
+                    print(json.dumps({k: v.model_dump() for k, v in flaky_map.items()}, indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Flakiness Analysis ({len(flaky_map)} tests tracked):")
+                    for tid, rec in flaky_map.items():
+                        print(f"    • [{rec.status.value}] {tid} (Instability: {rec.instability_rate:.2f}, Runs: {rec.total_runs}, Retries: {rec.retry_count})")
+            elif act == "quality":
+                q_hist = engine.history_store.get_quality_history(limit=limit)
+                if parsed.json:
+                    print(json.dumps([q.model_dump() for q in q_hist], indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Historical Quality Findings ({len(q_hist)} tracked):")
+                    for q in q_hist:
+                        print(f"    • [{q.status.value}] [{q.dimension.upper()}] {q.finding_fingerprint} ({q.affected_target}) x{q.occurrences}")
+            else:
+                execs = engine.history_store.get_executions(limit=limit)
+                if parsed.json:
+                    print(json.dumps([e.model_dump() for e in execs], indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Execution History ({len(execs)} recent executions):")
+                    for e in execs[:20]:
+                        print(f"    • [{e.status}] {e.test_id} ({e.duration_ms:.1f}ms) [Mode: {e.execution_mode}]")
+            return 0
+
+        elif parsed.command == "analyze":
+            act = getattr(parsed, "action", "effectiveness") or "effectiveness"
+            limit = getattr(parsed, "limit", 50)
+            from aegis.history.effectiveness import TestEffectivenessEngine
+            from aegis.history.redundancy import RedundancyEngine
+
+            if act == "effectiveness":
+                eff_eng = TestEffectivenessEngine(engine.history_store)
+                eff_map = eff_eng.analyze_all(limit_per_test=limit)
+                if parsed.json:
+                    print(json.dumps({k: v.model_dump() for k, v in eff_map.items()}, indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Test Effectiveness & Value Ranking ({len(eff_map)} tests):")
+                    for tid, eff in sorted(eff_map.items(), key=lambda x: x[1].value_score, reverse=True):
+                        print(f"    • [Score: {eff.value_score:>5.1f}] {tid} (Defects Found: {eff.defects_detected}/{eff.total_executions}, Cost: {eff.avg_duration_ms:.1f}ms)")
+            elif act == "redundancy":
+                red_eng = RedundancyEngine(engine.history_store)
+                redundancies = red_eng.analyze_redundancy(limit=limit)
+                if parsed.json:
+                    print(json.dumps([r.model_dump() for r in redundancies], indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Test Redundancy Analysis ({len(redundancies)} potential overlaps):")
+                    for r in redundancies:
+                        print(f"    • [Overlap: {r.overlap_score*100:.1f}%] {r.test_id_a} <-> {r.test_id_b}")
+            elif act == "failures":
+                clusters = engine.history_store.get_failure_clusters(limit=limit)
+                if parsed.json:
+                    print(json.dumps([c.model_dump() for c in clusters], indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Failure Cluster Analysis ({len(clusters)} clusters):")
+                    for c in clusters:
+                        print(f"    • [{c.classification.value}] {c.fingerprint} (x{c.occurrences}) -> {c.sample_message[:60]}")
+            elif act == "risk":
+                # Historical risk calibration analysis
+                assessment = engine.assess_risk()
+                execs = engine.history_store.get_executions(limit=limit)
+                failed_execs = [e for e in execs if e.status in ("FAILED", "ERROR", "TIMEOUT")]
+                calib_data = {
+                    "current_predicted_risk": assessment.level.value,
+                    "composite_score": assessment.composite_score,
+                    "historical_total_executions": len(execs),
+                    "historical_failed_executions": len(failed_execs),
+                    "calibration_status": "CALIBRATED" if len(execs) >= 5 else "INSUFFICIENT_SAMPLES",
+                    "historical_failure_rate": round(len(failed_execs) / max(1, len(execs)), 3),
+                    "risk_factors": [f.model_dump() for f in assessment.factors],
+                }
+                if parsed.json:
+                    print(json.dumps(calib_data, indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Risk Model Historical Calibration:")
+                    print(f"    • Predicted Risk Level: {assessment.level.value} (Score: {assessment.composite_score})")
+                    print(f"    • Historical Executions: {len(execs)} (Failures: {len(failed_execs)})")
+                    print(f"    • Calibration Status: {calib_data['calibration_status']}")
+            else:
+                profile = engine.discover()
+                if parsed.json:
+                    print(json.dumps({
+                        "project_name": profile.project_name,
+                        "architecture": profile.infrastructure.model_dump(),
+                        "interfaces": profile.interfaces.model_dump(),
+                    }, indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Static Architecture & Interface Analysis for: {profile.project_name}")
+            return 0
 
         elif parsed.command == "investigate":
             report_data = engine.storage.load_json("report.json")

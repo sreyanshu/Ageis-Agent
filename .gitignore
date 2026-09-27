@@ -43,3 +43,6 @@ htmlcov/
 # Aegis runtime cache
 .aegis/artifacts/
 .aegis/cache/
+.aegis/history/
+scratch/
+

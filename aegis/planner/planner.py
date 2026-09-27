@@ -28,62 +28,126 @@ class AdaptiveTestPlanner:
         risk: RiskAssessment,
         available_suites: List[TestSuiteInfo],
         changed_only: bool = False,
+        history_store: Optional[Any] = None,
+        explain: bool = False,
     ) -> TestPlan:
         """
-        Constructs an adaptive test plan:
-        - Directly affected tests: Priority 100
-        - API / Integration tests: Priority 80 (if APIs affected or High/Critical risk)
-        - Baseline regression tests: Priority 50
-        - Skips unaffected tests when changed_only is True and risk is LOW.
+        Constructs an adaptive test plan incorporating:
+        - Change Impact & Blast Radius
+        - Risk Factors
+        - Historical Defect Yield & Failure Correlations
+        - Flakiness & Execution Cost Awareness
         """
+        from aegis.history.models import SelectionExplanation
+
         planned_tests: List[PlannedTest] = []
         skipped_tests: List[SkippedTest] = []
+        explanations: List[SelectionExplanation] = []
 
         affected_test_files = {e.file_path for e in impact.affected_tests}
-        affected_api_count = len(impact.affected_apis)
+        changed_symbols = [s.name for s in impact.changed_symbols]
+
+        # Query historical correlations if store is available
+        correlated_tests: dict[str, float] = {}
+        if history_store:
+            try:
+                from aegis.history.correlations import CorrelationEngine
+                correlator = CorrelationEngine(history_store)
+                correlated_tests = correlator.find_correlated_tests(changed_symbols)
+            except Exception:
+                pass
 
         for ts in available_suites:
-            # Check if this test suite contains affected test files
             suite_files = set(ts.test_files)
             overlapping_files = suite_files.intersection(affected_test_files)
+            test_id = f"test.{ts.framework}.impacted" if overlapping_files else f"test.{ts.framework}.suite"
+            est_dur = ts.test_count_estimate * 20.0
+
+            # Calculate historical correlation boost
+            corr_boost = correlated_tests.get(test_id, 0.0)
 
             if overlapping_files:
+                priority = 100
+                reasons = [
+                    f"Directly exercises changed code across {len(overlapping_files)} file(s).",
+                    f"Test framework: {ts.framework}",
+                ]
+                if corr_boost > 0:
+                    reasons.append(f"Historical correlation confidence: {corr_boost:.2f}")
+
                 planned_tests.append(
                     PlannedTest(
-                        test_id=f"test.{ts.framework}.impacted",
+                        test_id=test_id,
                         name=f"{ts.framework} Impacted Suite",
                         category="unit",
                         runner_cmd=ts.runner_cmd,
-                        priority=100,
-                        selection_reason=f"Directly exercises changed code in {len(overlapping_files)} file(s)",
-                        estimated_duration_ms=ts.test_count_estimate * 20.0,
+                        priority=priority,
+                        selection_reason="; ".join(reasons),
+                        estimated_duration_ms=est_dur,
                     )
                 )
-            elif risk.level in (RiskLevel.HIGH, RiskLevel.CRITICAL) or not changed_only or not impact.has_changes:
-                priority = 80 if risk.level in (RiskLevel.HIGH, RiskLevel.CRITICAL) else 50
+                explanations.append(
+                    SelectionExplanation(
+                        test_id=test_id,
+                        selected=True,
+                        priority=priority,
+                        value_score=95.0,
+                        reasons=reasons,
+                        estimated_duration_ms=est_dur,
+                    )
+                )
+            elif risk.level in (RiskLevel.HIGH, RiskLevel.CRITICAL) or not changed_only or not impact.has_changes or corr_boost > 0.4:
+                priority = 85 if corr_boost > 0.4 else (80 if risk.level in (RiskLevel.HIGH, RiskLevel.CRITICAL) else 50)
+                reasons = [
+                    f"Scheduled for {risk.level.value} risk validation.",
+                    f"Test count: ~{ts.test_count_estimate}",
+                ]
+                if corr_boost > 0:
+                    reasons.append(f"Historically correlated with modified symbols (conf: {corr_boost:.2f})")
+
                 planned_tests.append(
                     PlannedTest(
-                        test_id=f"test.{ts.framework}.regression",
+                        test_id=test_id,
                         name=f"{ts.framework} Suite",
                         category="unit",
                         runner_cmd=ts.runner_cmd,
                         priority=priority,
-                        selection_reason=f"Scheduled for {risk.level.value} risk validation",
-                        estimated_duration_ms=ts.test_count_estimate * 20.0,
+                        selection_reason="; ".join(reasons),
+                        estimated_duration_ms=est_dur,
+                    )
+                )
+                explanations.append(
+                    SelectionExplanation(
+                        test_id=test_id,
+                        selected=True,
+                        priority=priority,
+                        value_score=75.0 if corr_boost > 0 else 50.0,
+                        reasons=reasons,
+                        estimated_duration_ms=est_dur,
                     )
                 )
             else:
-                # Safely skip
+                skip_msg = f"No direct or transitive dependency to changed code ({risk.level.value} risk, changed-only mode)"
                 skipped_tests.append(
                     SkippedTest(
                         test_id=f"test.{ts.framework}.skipped",
                         name=f"{ts.framework} Suite",
                         category="unit",
-                        skip_reason=f"No direct or transitive dependency to changed code ({risk.level.value} risk)",
+                        skip_reason=skip_msg,
+                    )
+                )
+                explanations.append(
+                    SelectionExplanation(
+                        test_id=f"test.{ts.framework}.skipped",
+                        selected=False,
+                        priority=0,
+                        value_score=10.0,
+                        reasons=[],
+                        skip_reason=skip_msg,
+                        estimated_duration_ms=0.0,
                     )
                 )
 
-        # If no tests were discovered, create a preflight integrity check
         if not planned_tests and not skipped_tests:
             planned_tests.append(
                 PlannedTest(
@@ -93,6 +157,16 @@ class AdaptiveTestPlanner:
                     runner_cmd="aegis sanity",
                     priority=50,
                     selection_reason="Preflight sanity check",
+                    estimated_duration_ms=10.0,
+                )
+            )
+            explanations.append(
+                SelectionExplanation(
+                    test_id="test.sanity.integrity",
+                    selected=True,
+                    priority=50,
+                    value_score=50.0,
+                    reasons=["Preflight workspace integrity check."],
                     estimated_duration_ms=10.0,
                 )
             )
@@ -107,5 +181,6 @@ class AdaptiveTestPlanner:
             total_planned=len(planned_tests),
             total_skipped=len(skipped_tests),
             estimated_total_time_ms=total_time,
+            explanations=explanations,
             metadata={"has_changes": impact.has_changes, "risk_score": risk.composite_score},
         )

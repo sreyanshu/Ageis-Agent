@@ -134,7 +134,7 @@ aegis/
 - [x] **Phase 2 (Project Intelligence & Graph)**: AST parsing (Python, TS/JS, Go), SQLite Project Graph, Change Impact Engine, Adaptive Risk Engine, Test Planning Foundation.
 - [x] **Phase 3 (Universal Test Execution Engine & DAG)**: Universal Runner Protocol & Registry, Execution DAG & Scheduler, Fast-Fail Cascading, Execution Caching, Native Unit (pytest/vitest/jest/go test), Sanity Preflight, Contract-Aware API & Bounded Fuzzing, Integration, E2E Journey, and UI Visual Baseline Runners.
 - [x] **Phase 4 (Quality Dimensions Engine)**: Unified Quality Dimensions Contract, Accessibility (WCAG & axe-core adapter), Security (SARIF v2.1.0 parser & normalizer), Performance (deterministic benchmarks & environment fingerprinting), UX Heuristics, Quality Planner, and Release Policy Gate.
-- [ ] **Phase 5 (AI Investigation & Routing)**: Multi-provider LLM abstraction (`openai`, `anthropic`, `google`, `local`), context compression, failure root cause synthesis.
+- [x] **Phase 5 (Failure Intelligence, Historical Learning & Optimization)**: Persistent Historical Knowledge Store (.aegis/history/), Volatile Noise Normalization & Secret Redaction, Failure Clustering & Deterministic Classification, Flakiness Engine, Test Effectiveness & Value Model, Redundancy Analysis, Change-to-Failure Correlations, Adaptive Test Selection 2.0 with Explanations, and AI Reasoning Boundary.
 - [ ] **Phase 6 (Controlled Self-Healing)**: Bounded patch proposal loops, patch verification, regression validation.
 - [ ] **Phase 7 (Release Gate)**: Deterministic policy evaluator (pass/fail release readiness verdict).
 - [ ] **Phase 8 (Integrations)**: MCP Server, Antigravity IDE adapter, GitHub Actions CI action, REST API.

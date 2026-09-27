@@ -1,7 +1,7 @@
 {
   "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/node_react_express",
   "tree_hash": "a2be332be76b4d005cb82d2da63ff41a603299f568e7da586d51173ba0f5a2d9",
-  "discovered_at": 1790509615.34219,
+  "discovered_at": 1790510482.892624,
   "ci_providers": [
     "github-actions"
   ]

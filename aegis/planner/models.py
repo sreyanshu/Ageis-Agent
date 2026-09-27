@@ -67,4 +67,5 @@ class TestPlan(BaseModel):
     total_planned: int = 0
     total_skipped: int = 0
     estimated_total_time_ms: float = 0.0
+    explanations: List[Any] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
