@@ -1,0 +1,591 @@
+{
+  "dag_id": "dag_1790509071914_6c778a64",
+  "created_at": 1790509071.914828,
+  "nodes": {
+    "dag.sanity.preflight": {
+      "node_id": "dag.sanity.preflight",
+      "runner_name": "aegis_sanity_runner",
+      "category": "sanity",
+      "test_id": "sanity.preflight",
+      "name": "Sanity Preflight Probe",
+      "priority": 100,
+      "dependencies": [],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "sanity.manifest_integrity",
+          "name": "Project Manifest Integrity (Dry Run)",
+          "suite": "default",
+          "category": "sanity",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_sanity_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated sanity preflight integrity probe",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/sanity_manifest_integrity_stdout.log",
+              "size_bytes": 52,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.164675208,
+      "end_time": 0.164709541
+    },
+    "dag.unit.0": {
+      "node_id": "dag.unit.0",
+      "runner_name": "native_unit_runner",
+      "category": "unit",
+      "test_id": "test.pytest.regression",
+      "name": "pytest Suite",
+      "priority": 50,
+      "dependencies": [
+        "dag.sanity.preflight"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "unit.dry_run",
+          "name": "Unit Tests (Dry Run)",
+          "suite": "default",
+          "category": "unit",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "native_unit_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated execution: /Users/apple/Ageis Agent/.venv/bin/python3 -m pytest -v in /Users/apple/Ageis Agent",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/unit_dry_run_stdout.log",
+              "size_bytes": 114,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.16479275,
+      "end_time": 0.164819583
+    },
+    "dag.unit.1": {
+      "node_id": "dag.unit.1",
+      "runner_name": "native_unit_runner",
+      "category": "unit",
+      "test_id": "test.jest.regression",
+      "name": "jest Suite",
+      "priority": 50,
+      "dependencies": [
+        "dag.sanity.preflight"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "unit.dry_run",
+          "name": "Unit Tests (Dry Run)",
+          "suite": "default",
+          "category": "unit",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "native_unit_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated execution: /Users/apple/Ageis Agent/.venv/bin/python3 -m pytest -v in /Users/apple/Ageis Agent",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/unit_dry_run_stdout.log",
+              "size_bytes": 114,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.164886708,
+      "end_time": 0.164905708
+    },
+    "dag.unit.2": {
+      "node_id": "dag.unit.2",
+      "runner_name": "native_unit_runner",
+      "category": "unit",
+      "test_id": "test.go test.regression",
+      "name": "go test Suite",
+      "priority": 50,
+      "dependencies": [
+        "dag.sanity.preflight"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "unit.dry_run",
+          "name": "Unit Tests (Dry Run)",
+          "suite": "default",
+          "category": "unit",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "native_unit_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated execution: /Users/apple/Ageis Agent/.venv/bin/python3 -m pytest -v in /Users/apple/Ageis Agent",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/unit_dry_run_stdout.log",
+              "size_bytes": 114,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.1649565,
+      "end_time": 0.164973958
+    },
+    "dag.api.contract": {
+      "node_id": "dag.api.contract",
+      "runner_name": "aegis_api_runner",
+      "category": "api",
+      "test_id": "api.contract_suite",
+      "name": "Contract API Validation Suite",
+      "priority": 60,
+      "dependencies": [
+        "dag.sanity.preflight"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "api.contract.GET._path",
+          "name": "API Contract Validation: GET /path",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /path",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__path_stdout.log",
+              "size_bytes": 62,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._path",
+          "name": "API Contract Validation: GET /path",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /path",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__path_stdout.log",
+              "size_bytes": 62,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._users",
+          "name": "API Contract Validation: GET /users",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /users",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__users_stdout.log",
+              "size_bytes": 63,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._api_v1_users",
+          "name": "API Contract Validation: GET /api/v1/users",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /api/v1/users",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__api_v1_users_stdout.log",
+              "size_bytes": 70,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._health",
+          "name": "API Contract Validation: GET /health",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /health",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__health_stdout.log",
+              "size_bytes": 64,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.POST._api_v1_auth_login",
+          "name": "API Contract Validation: POST /api/v1/auth/login",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for POST /api/v1/auth/login",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_POST__api_v1_auth_login_stdout.log",
+              "size_bytes": 76,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._api_v1_items",
+          "name": "API Contract Validation: GET /api/v1/items",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /api/v1/items",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__api_v1_items_stdout.log",
+              "size_bytes": 70,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.GET._api_health",
+          "name": "API Contract Validation: GET /api/health",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for GET /api/health",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_GET__api_health_stdout.log",
+              "size_bytes": 68,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        },
+        {
+          "test_id": "api.contract.POST._api_users",
+          "name": "API Contract Validation: POST /api/users",
+          "suite": "default",
+          "category": "api",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_api_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated contract & schema validation for POST /api/users",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/api_contract_POST__api_users_stdout.log",
+              "size_bytes": 68,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.165024375,
+      "end_time": 0.1651075
+    },
+    "dag.integration.suite": {
+      "node_id": "dag.integration.suite",
+      "runner_name": "aegis_integration_runner",
+      "category": "integration",
+      "test_id": "integration.suite",
+      "name": "Integration Test Suite",
+      "priority": 70,
+      "dependencies": [
+        "dag.unit.0",
+        "dag.unit.1",
+        "dag.unit.2",
+        "dag.api.contract"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "integration.dry_run",
+          "name": "Integration Test Suite (Dry Run)",
+          "suite": "default",
+          "category": "integration",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_integration_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated integration verification: /Users/apple/Ageis Agent/.venv/bin/python3 -m pytest -v -m integration",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/integration_dry_run_stdout.log",
+              "size_bytes": 116,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.165606125,
+      "end_time": 0.165617916
+    },
+    "dag.e2e.journeys": {
+      "node_id": "dag.e2e.journeys",
+      "runner_name": "aegis_e2e_runner",
+      "category": "e2e",
+      "test_id": "e2e.journeys",
+      "name": "E2E Browser Journey Suite",
+      "priority": 50,
+      "dependencies": [
+        "dag.integration.suite"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "journey.user_login",
+          "name": "User Authentication Journey",
+          "suite": "default",
+          "category": "e2e",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_e2e_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated journey journey.user_login (4 steps)",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/journey_user_login_stdout.log",
+              "size_bytes": 56,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.165683083,
+      "end_time": 0.1657005
+    },
+    "dag.ui.visual": {
+      "node_id": "dag.ui.visual",
+      "runner_name": "aegis_ui_runner",
+      "category": "ui",
+      "test_id": "ui.visual",
+      "name": "UI Functional & Visual Suite",
+      "priority": 40,
+      "dependencies": [
+        "dag.e2e.journeys"
+      ],
+      "target_files": [],
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_attempts": 2,
+        "retry_transient": true,
+        "retry_deterministic": false
+      },
+      "status": "PASSED",
+      "results": [
+        {
+          "test_id": "ui.component.rendering",
+          "name": "UI Component Rendering Validation",
+          "suite": "default",
+          "category": "ui",
+          "status": "PASSED",
+          "duration_ms": 0.0,
+          "runner": "aegis_ui_runner",
+          "failure_fingerprint": null,
+          "normalized_error": null,
+          "raw_stdout": "[DRY_RUN] Simulated UI component rendering & visual diffing",
+          "raw_stderr": null,
+          "artifacts": [
+            {
+              "kind": "stdout",
+              "path": "artifacts/ui_component_rendering_stdout.log",
+              "size_bytes": 59,
+              "mime_type": "text/plain"
+            }
+          ],
+          "confidence": 1.0,
+          "deterministic_verdict": true,
+          "metadata": {}
+        }
+      ],
+      "failure_classification": null,
+      "block_reason": null,
+      "start_time": 0.165765041,
+      "end_time": 0.165778916
+    }
+  }
+}

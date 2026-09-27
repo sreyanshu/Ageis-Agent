@@ -1,18 +1,46 @@
 {
   "level": "LOW",
-  "composite_score": 0.0,
-  "generated_at": 1790508360.800805,
+  "composite_score": 0.1,
+  "generated_at": 1790509071.903828,
   "factors": [
     {
       "factor_name": "change_magnitude",
       "weight": 0.2,
+      "raw_score": 0.5,
+      "weighted_score": 0.1,
+      "evidence": "3 changed file(s), 1 changed symbol(s)"
+    },
+    {
+      "factor_name": "blast_radius",
+      "weight": 0.25,
       "raw_score": 0.0,
       "weighted_score": 0.0,
-      "evidence": "No modifications detected in workspace"
+      "evidence": "0 direct dependents, 0 indirect dependents"
+    },
+    {
+      "factor_name": "api_exposure",
+      "weight": 0.25,
+      "raw_score": 0.0,
+      "weighted_score": 0.0,
+      "evidence": "0 exposed public API endpoint(s) affected"
+    },
+    {
+      "factor_name": "data_sensitivity",
+      "weight": 0.15,
+      "raw_score": 0.0,
+      "weighted_score": 0.0,
+      "evidence": "0 database model(s) or table(s) affected"
+    },
+    {
+      "factor_name": "signature_breaking_risk",
+      "weight": 0.15,
+      "raw_score": 0.0,
+      "weighted_score": 0.0,
+      "evidence": "0 function or method signature change(s)"
     }
   ],
   "reasons": [
-    "Zero code or configuration changes detected"
+    "Low complexity isolated modification"
   ],
-  "recommendation": "Targeted sanity verification only"
+  "recommendation": "Targeted unit tests only"
 }

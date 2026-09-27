@@ -32,72 +32,84 @@ Universal AI Quality Engineering & Production Readiness Platform
 
 
 def build_parser() -> argparse.ArgumentParser:
+    common_parser = argparse.ArgumentParser(add_help=False)
+    common_parser.add_argument("--json", action="store_true", default=argparse.SUPPRESS, help="Output results in machine-readable JSON format")
+    common_parser.add_argument("--workspace", default=argparse.SUPPRESS, help="Target workspace path (defaults to current directory)")
+    common_parser.add_argument("--verbose", "-v", action="store_true", default=argparse.SUPPRESS, help="Enable verbose diagnostic logs")
+
     parser = argparse.ArgumentParser(
         prog="aegis",
         description="Aegis: Universal AI Quality Engineering & Production Readiness Platform",
+        parents=[common_parser],
     )
     parser.add_argument("--version", action="version", version=f"Aegis v{__version__}")
-    parser.add_argument("--json", action="store_true", help="Output results in machine-readable JSON format")
-    parser.add_argument("--workspace", default=".", help="Target workspace path (defaults to current directory)")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose diagnostic logs")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # graph group
-    p_graph = subparsers.add_parser("graph", help="Project Intelligence Graph operations")
+    p_graph = subparsers.add_parser("graph", parents=[common_parser], help="Project Intelligence Graph operations")
     p_graph_sub = p_graph.add_subparsers(dest="graph_action", help="Graph action: build, inspect, dependencies, impact")
     
-    p_g_build = p_graph_sub.add_parser("build", help="Build or incrementally update project graph")
+    p_g_build = p_graph_sub.add_parser("build", parents=[common_parser], help="Build or incrementally update project graph")
     p_g_build.add_argument("--force", action="store_true", help="Force full re-indexing of all files")
 
-    p_g_inspect = p_graph_sub.add_parser("inspect", help="Inspect a specific node in the graph")
+    p_g_inspect = p_graph_sub.add_parser("inspect", parents=[common_parser], help="Inspect a specific node in the graph")
     p_g_inspect.add_argument("node_id", help="Target node identifier")
 
-    p_g_deps = p_graph_sub.add_parser("dependencies", help="Show upstream dependencies for a node")
+    p_g_deps = p_graph_sub.add_parser("dependencies", parents=[common_parser], help="Show upstream dependencies for a node")
     p_g_deps.add_argument("node_id", help="Target node identifier")
     p_g_deps.add_argument("--depth", type=int, default=3, help="Max traversal depth")
 
-    p_g_imp = p_graph_sub.add_parser("impact", help="Show downstream dependents for a node")
+    p_g_imp = p_graph_sub.add_parser("impact", parents=[common_parser], help="Show downstream dependents for a node")
     p_g_imp.add_argument("node_id", help="Target node identifier")
     p_g_imp.add_argument("--depth", type=int, default=5, help="Max traversal depth")
 
     # init
-    p_init = subparsers.add_parser("init", help="Initialize Aegis in current workspace (.aegis/)")
+    p_init = subparsers.add_parser("init", parents=[common_parser], help="Initialize Aegis in current workspace (.aegis/)")
 
     # discover
-    p_disc = subparsers.add_parser("discover", help="Discover languages, frameworks, build tools, infra, APIs, and tests")
+    p_disc = subparsers.add_parser("discover", parents=[common_parser], help="Discover languages, frameworks, build tools, infra, APIs, and tests")
     p_disc.add_argument("--name", help="Custom project name override")
 
     # analyze
-    p_ana = subparsers.add_parser("analyze", help="Perform static architecture and dependency analysis")
+    p_ana = subparsers.add_parser("analyze", parents=[common_parser], help="Perform static architecture and dependency analysis")
 
     # impact
-    p_imp = subparsers.add_parser("impact", help="Detect changed symbols and compute downstream blast radius")
+    p_imp = subparsers.add_parser("impact", parents=[common_parser], help="Detect changed symbols and compute downstream blast radius")
     p_imp.add_argument("--depth", type=int, default=5, help="Max traversal depth")
 
     # risk
-    p_risk = subparsers.add_parser("risk", help="Calculate deterministic, explainable risk assessment")
+    p_risk = subparsers.add_parser("risk", parents=[common_parser], help="Calculate deterministic, explainable risk assessment")
 
     # plan
-    p_plan = subparsers.add_parser("plan", help="Generate adaptive, risk-weighted test plan")
+    p_plan = subparsers.add_parser("plan", parents=[common_parser], help="Generate adaptive, risk-weighted test plan")
     p_plan.add_argument("--changed-only", action="store_true", help="Only plan tests for impacted code")
 
     # test
-    p_test = subparsers.add_parser("test", help="Execute deterministic quality validations")
+    p_test = subparsers.add_parser("test", parents=[common_parser], help="Execute deterministic quality validations")
     p_test.add_argument("category", nargs="?", default="all", help="Test category: unit, api, sanity, integration, e2e, ui, security, performance, compatibility, all")
     p_test.add_argument("--dry-run", action="store_true", help="Simulate execution without running commands")
     p_test.add_argument("--changed-only", action="store_true", help="Only run tests impacted by recent changes")
+    p_test.add_argument("--parallel", action="store_true", default=True, help="Enable parallel test execution")
+    p_test.add_argument("--fail-fast", action="store_true", default=True, help="Halt downstream dependents immediately upon upstream failure")
     p_test.add_argument("--ci", action="store_true", help="Run in strict CI mode")
 
+    # run (runs full planned DAG)
+    p_run = subparsers.add_parser("run", parents=[common_parser], help="Execute complete planned execution DAG")
+    p_run.add_argument("--dry-run", action="store_true", help="Simulate execution without running commands")
+    p_run.add_argument("--changed-only", action="store_true", help="Only run tests impacted by recent changes")
+    p_run.add_argument("--parallel", action="store_true", default=True, help="Enable parallel test execution")
+    p_run.add_argument("--fail-fast", action="store_true", default=True, help="Halt downstream dependents immediately upon upstream failure")
+
     # investigate
-    p_inv = subparsers.add_parser("investigate", help="Investigate and fingerprint recent failures")
+    p_inv = subparsers.add_parser("investigate", parents=[common_parser], help="Investigate and fingerprint recent failures")
     p_inv.add_argument("--fingerprint", help="Specific failure fingerprint to look up")
 
     # report
-    p_rep = subparsers.add_parser("report", help="Generate consolidated evidence and readiness report")
+    p_rep = subparsers.add_parser("report", parents=[common_parser], help="Generate consolidated evidence and readiness report")
 
     # release-check
-    p_rel = subparsers.add_parser("release-check", help="Evaluate deterministic release readiness policy gate")
+    p_rel = subparsers.add_parser("release-check", parents=[common_parser], help="Evaluate deterministic release readiness policy gate")
 
     return parser
 
@@ -105,6 +117,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(args: Optional[List[str]] = None) -> int:
     parser = build_parser()
     parsed = parser.parse_args(args)
+
+    parsed.json = bool(getattr(parsed, "json", False))
+    parsed.workspace = str(getattr(parsed, "workspace", "."))
+    parsed.verbose = bool(getattr(parsed, "verbose", False))
 
     if not parsed.command:
         if not parsed.json:
@@ -317,61 +333,35 @@ def main(args: Optional[List[str]] = None) -> int:
                 print(f"    - Est. Execution Time  : {plan.estimated_total_time_ms:.1f} ms")
             return 0
 
-        elif parsed.command == "test":
-            profile = engine.discover()
-            collector = EvidenceCollector(project_name=profile.project_name, storage=engine.storage, event_bus=engine.event_bus)
-            category = parsed.category.lower()
-            dry_run = parsed.dry_run
+        elif parsed.command in ("test", "run"):
+            category = getattr(parsed, "category", "all") or "all"
+            dry_run = getattr(parsed, "dry_run", False)
+            changed_only = getattr(parsed, "changed_only", False)
+            parallel = getattr(parsed, "parallel", True)
+            fail_fast = getattr(parsed, "fail_fast", True)
 
             if not parsed.json:
                 print_banner()
-                print(f"[*] Executing Aegis Quality Verification [Category: {category}] (dry-run: {dry_run})")
+                print(f"[*] Aegis Execution Engine [Target: {category}] (dry-run: {dry_run}, parallel: {parallel}, fail-fast: {fail_fast})")
 
-            # Execute discovered test suites deterministically
-            executed_any = False
-            for ts in profile.test_suites:
-                if category in ("all", "unit", ts.framework):
-                    executed_any = True
-                    cmd_parts = ts.runner_cmd.split()
-                    if not parsed.json:
-                        print(f"[*] Running {ts.framework}: {' '.join(cmd_parts)}")
-                    res = engine.executor.run(cmd_parts, dry_run=dry_run)
-                    status = TestStatus.PASSED if res.is_success else (TestStatus.TIMEOUT if res.timed_out else TestStatus.FAILED)
-                    collector.record_result(
-                        TestResult(
-                            test_id=f"{ts.framework}.suite",
-                            name=f"{ts.framework} Test Suite",
-                            category="unit",
-                            status=status,
-                            duration_ms=res.duration_ms,
-                            runner=ts.framework,
-                            raw_stdout=res.stdout,
-                            raw_stderr=res.stderr,
-                        )
-                    )
+            # Generate plan respecting changed_only flag
+            test_plan = engine.plan_tests(changed_only=changed_only)
+            categories_filter = None if category == "all" else [category]
 
-            if not executed_any:
-                collector.record_result(
-                    TestResult(
-                        test_id="sanity.project_integrity",
-                        name="Project Integrity Check",
-                        category="sanity",
-                        status=TestStatus.PASSED,
-                        duration_ms=1.0,
-                        runner="deterministic_sanity",
-                        raw_stdout=f"Integrity check passed. Tree hash: {profile.tree_hash}",
-                    )
-                )
-
-            report = collector.generate_report(tree_hash=profile.tree_hash)
-            assessment = engine.assess_release_readiness(report)
-            report.release_assessment = assessment
+            report = engine.execute_plan(
+                test_plan=test_plan,
+                categories=categories_filter,
+                fail_fast=fail_fast,
+                parallel=parallel,
+                dry_run=dry_run,
+            )
+            assessment = report.release_assessment or engine.assess_release_readiness(report)
 
             if parsed.json:
                 print(report.model_dump_json(indent=2))
             else:
                 print("\n" + "=" * 60)
-                print(f"AEGIS EXECUTION SUMMARY")
+                print("AEGIS EXECUTION SUMMARY & EVIDENCE")
                 print("=" * 60)
                 print(f"Total Validations : {report.total_tests}")
                 print(f"Passed            : {report.passed}")
@@ -381,7 +371,7 @@ def main(args: Optional[List[str]] = None) -> int:
                 print(f"Release Verdict   : {assessment.verdict.value}")
                 for reason in assessment.reasons:
                     print(f"  • {reason}")
-                print(f"\nMachine-readable report saved to: {engine.storage.get_artifact_path('report.json')}")
+                print(f"\nMachine-readable evidence report saved to: {engine.storage.get_artifact_path('report.json')}")
 
             return 0 if assessment.verdict in ("READY", "REQUIRES_REVIEW") else 1
 

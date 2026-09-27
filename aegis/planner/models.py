@@ -37,17 +37,19 @@ class RiskAssessment(BaseModel):
 
 class PlannedTest(BaseModel):
     """A test selected for execution with priority and selection rationale."""
+    __test__ = False
     test_id: str
     name: str
     category: str                            # unit, api, sanity, integration, e2e, ui
     runner_cmd: str
     priority: int = 50                       # 0 (lowest) to 100 (highest)
-    selection_reason: str
+    selection_reason: str = "Planned validation"
     estimated_duration_ms: float = 100.0
 
 
 class SkippedTest(BaseModel):
     """A test safely deferred/skipped based on lack of impact and low risk."""
+    __test__ = False
     test_id: str
     name: str
     category: str
@@ -56,6 +58,7 @@ class SkippedTest(BaseModel):
 
 class TestPlan(BaseModel):
     """Deterministic, risk-weighted test execution plan."""
+    __test__ = False
     plan_id: str
     timestamp: float = Field(default_factory=time.time)
     risk_level: RiskLevel

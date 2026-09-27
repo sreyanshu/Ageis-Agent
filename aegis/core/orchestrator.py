@@ -29,6 +29,17 @@ from aegis.impact.models import ImpactReport
 from aegis.planner.risk import AdaptiveRiskEngine
 from aegis.planner.models import RiskAssessment, TestPlan
 from aegis.planner.planner import AdaptiveTestPlanner
+from aegis.runners.registry import RunnerRegistry
+from aegis.runners.unit_runner import UniversalUnitRunner
+from aegis.runners.sanity_runner import SanityPreflightRunner
+from aegis.runners.api_runner import ContractAPIRunner
+from aegis.runners.integration_runner import IntegrationRunner
+from aegis.runners.e2e_runner import E2EJourneyRunner
+from aegis.runners.ui_runner import UIFunctionalRunner
+from aegis.runners.base import ExecutionContext, RunnerCategory
+from aegis.execution.dag import ExecutionDAGBuilder
+from aegis.execution.scheduler import DAGScheduler
+from aegis.execution.models import ExecutionDAG, DAGNodeStatus
 from aegis.evidence.models import (
     ReleaseAssessment,
     ReleaseGateVerdict,
@@ -72,6 +83,25 @@ class AegisEngine:
         )
         self.risk_engine = AdaptiveRiskEngine()
         self.planner = AdaptiveTestPlanner()
+
+        # Phase 3 Execution Layer
+        self.runner_registry = RunnerRegistry()
+        self._register_default_runners()
+        self.dag_builder = ExecutionDAGBuilder()
+        self.dag_scheduler = DAGScheduler(
+            registry=self.runner_registry,
+            storage=self.storage,
+            max_workers=self.config.execution.max_workers,
+        )
+
+    def _register_default_runners(self) -> None:
+        """Registers all built-in universal test runners."""
+        self.runner_registry.register(UniversalUnitRunner(self.workspace_root, executor=self.executor))
+        self.runner_registry.register(SanityPreflightRunner(self.workspace_root))
+        self.runner_registry.register(ContractAPIRunner(self.workspace_root))
+        self.runner_registry.register(IntegrationRunner(self.workspace_root, executor=self.executor))
+        self.runner_registry.register(E2EJourneyRunner(self.workspace_root))
+        self.runner_registry.register(UIFunctionalRunner(self.workspace_root))
 
     def init_workspace(self) -> Path:
         """Initializes Aegis workspace structure and writes default configuration."""
@@ -138,6 +168,57 @@ class AegisEngine:
         if self.storage:
             self.storage.save_json("test-plan.json", plan.model_dump())
         return plan
+
+    def execute_plan(
+        self,
+        test_plan: Optional[TestPlan] = None,
+        categories: Optional[List[str]] = None,
+        fail_fast: bool = True,
+        parallel: bool = True,
+        dry_run: bool = False,
+    ) -> EvidenceReport:
+        """
+        Builds the execution DAG from the test plan and runs all stages via the DAGScheduler.
+        Records machine-verifiable evidence and updates release readiness assessment.
+        """
+        profile = self.discover()
+        plan = test_plan or self.plan_tests()
+        dag = self.dag_builder.build_dag(plan, target_categories=categories)
+
+        corr_id = generate_id("corr")
+        collector = EvidenceCollector(
+            project_name=profile.project_name,
+            correlation_id=corr_id,
+            storage=self.storage,
+            event_bus=self.event_bus,
+        )
+
+        exec_context = ExecutionContext(
+            workspace_root=str(self.workspace_root),
+            dry_run=dry_run or self.config.execution.dry_run,
+            timeout_seconds=self.config.execution.timeout_seconds,
+            correlation_id=corr_id,
+        )
+
+        # Execute DAG
+        self.dag_scheduler.execute_dag(
+            dag=dag,
+            context=exec_context,
+            collector=collector,
+            tree_hash=profile.tree_hash,
+            fail_fast=fail_fast,
+            parallel=parallel and self.config.execution.parallel,
+        )
+
+        report = collector.generate_report(tree_hash=profile.tree_hash)
+        assessment = self.assess_release_readiness(report)
+        report.release_assessment = assessment
+
+        if self.storage:
+            self.storage.save_json("report.json", report.model_dump())
+            self.storage.save_json("execution-dag.json", dag.model_dump())
+
+        return report
 
     def assess_release_readiness(self, report: EvidenceReport) -> ReleaseAssessment:
         """

@@ -1,6 +1,6 @@
 {
-  "plan_id": "plan_1790508345773_019162de",
-  "timestamp": 1790508345.773123,
+  "plan_id": "plan_1790509071903_4f262758",
+  "timestamp": 1790509071.903947,
   "risk_level": "LOW",
   "selected_tests": [
     {
@@ -10,7 +10,7 @@
       "runner_cmd": "pytest",
       "priority": 50,
       "selection_reason": "Scheduled for LOW risk validation",
-      "estimated_duration_ms": 740.0
+      "estimated_duration_ms": 940.0
     },
     {
       "test_id": "test.jest.regression",
@@ -34,9 +34,9 @@
   "skipped_tests": [],
   "total_planned": 3,
   "total_skipped": 0,
-  "estimated_total_time_ms": 820.0,
+  "estimated_total_time_ms": 1020.0,
   "metadata": {
-    "has_changes": false,
-    "risk_score": 0.0
+    "has_changes": true,
+    "risk_score": 0.1
   }
 }

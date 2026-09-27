@@ -1,11 +1,26 @@
 {
-  "report_id": "imp_1790508360800_2db1777a",
-  "timestamp": 1790508360.800544,
-  "tree_hash": "ee51c2b95e95852ef7b936e9646fe902a4550b995e3a0ab1bc5cffa1a7bd80ff",
-  "has_changes": false,
-  "changed_files_count": 0,
-  "changed_files": [],
-  "changed_symbols": [],
+  "report_id": "imp_1790509071903_450e3f4f",
+  "timestamp": 1790509071.9036539,
+  "tree_hash": "5bd0b30fad702435e6ccf98cf02110e8e4e85f790273e382568f4fc71dbee6e1",
+  "has_changes": true,
+  "changed_files_count": 3,
+  "changed_files": [
+    "aegis/cli/main.py",
+    "docs/ARCHITECTURE.md",
+    "docs/execution-dag.md"
+  ],
+  "changed_symbols": [
+    {
+      "symbol_id": "file:aegis/cli/main.py",
+      "name": "main.py",
+      "change_type": "COMMENTS_ONLY",
+      "symbol_type": "file",
+      "file_path": "aegis/cli/main.py",
+      "line_start": null,
+      "signature": null,
+      "previous_signature": null
+    }
+  ],
   "affected_components": [],
   "affected_apis": [],
   "affected_ui": [],

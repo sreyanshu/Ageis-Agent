@@ -9,8 +9,8 @@
         ".pyw",
         ".pyi"
       ],
-      "file_count": 56,
-      "percentage": 83.58,
+      "file_count": 71,
+      "percentage": 86.59,
       "version_hint": ">=3.9",
       "primary": true
     },
@@ -20,7 +20,7 @@
         ".go"
       ],
       "file_count": 5,
-      "percentage": 7.46,
+      "percentage": 6.1,
       "version_hint": null,
       "primary": false
     },
@@ -33,7 +33,7 @@
         ".cts"
       ],
       "file_count": 4,
-      "percentage": 5.97,
+      "percentage": 4.88,
       "version_hint": null,
       "primary": false
     },
@@ -46,7 +46,7 @@
         ".cjs"
       ],
       "file_count": 2,
-      "percentage": 2.99,
+      "percentage": 2.44,
       "version_hint": null,
       "primary": false
     }

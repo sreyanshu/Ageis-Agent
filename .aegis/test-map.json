@@ -11,17 +11,21 @@
         "tests/test_change_impact.py",
         "tests/test_cli.py",
         "tests/test_cli_phase2.py",
+        "tests/test_cli_phase3.py",
         "tests/test_config.py",
+        "tests/test_dag_scheduler.py",
         "tests/test_discovery.py",
         "tests/test_evidence.py",
+        "tests/test_execution_dag.py",
         "tests/test_executor.py",
         "tests/test_hashing.py",
         "tests/test_orchestrator.py",
         "tests/test_project_graph.py",
         "tests/test_risk_engine.py",
+        "tests/test_runners.py",
         "tests/test_symbol_index.py"
       ],
-      "test_count_estimate": 37,
+      "test_count_estimate": 47,
       "test_dirs": [
         "tests",
         "tests/fixtures/projects/python_fastapi/tests"
@@ -51,5 +55,5 @@
       ]
     }
   ],
-  "total_estimated_tests": 41
+  "total_estimated_tests": 51
 }
