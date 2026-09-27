@@ -21,6 +21,14 @@ from aegis.core.executor import ProcessExecutor
 from aegis.discovery.detector import ProjectDiscoveryEngine, ProjectProfile
 from aegis.storage.filesystem import FilesystemStorage
 from aegis.storage.hashing import IncrementalChangeEngine, ChangeSet
+from aegis.indexer.symbol_index import SymbolIndex
+from aegis.graph.project_graph import ProjectGraph
+from aegis.graph.models import GraphStats
+from aegis.impact.analyzer import ChangeImpactEngine
+from aegis.impact.models import ImpactReport
+from aegis.planner.risk import AdaptiveRiskEngine
+from aegis.planner.models import RiskAssessment, TestPlan
+from aegis.planner.planner import AdaptiveTestPlanner
 from aegis.evidence.models import (
     ReleaseAssessment,
     ReleaseGateVerdict,
@@ -54,12 +62,23 @@ class AegisEngine:
 
         self.discovery_engine = ProjectDiscoveryEngine(self.workspace_root, storage=self.storage)
         self.change_engine = IncrementalChangeEngine(self.workspace_root, storage=self.storage)
+        self.symbol_index = SymbolIndex(self.workspace_root, storage=self.storage)
+        self.graph = ProjectGraph(self.workspace_root)
+        self.impact_engine = ChangeImpactEngine(
+            self.workspace_root,
+            graph=self.graph,
+            symbol_index=self.symbol_index,
+            change_engine=self.change_engine,
+        )
+        self.risk_engine = AdaptiveRiskEngine()
+        self.planner = AdaptiveTestPlanner()
 
     def init_workspace(self) -> Path:
         """Initializes Aegis workspace structure and writes default configuration."""
         config_path = self.config.save(self.workspace_root / self.config.storage.dir_name / "config.yaml")
-        # Run initial discovery to populate profile artifacts
+        # Run initial discovery and build semantic graph
         self.discover()
+        self.build_graph()
         self.change_engine.commit_hashes()
         return config_path
 
@@ -84,13 +103,41 @@ class AegisEngine:
         )
         return profile
 
-    def detect_changes(self) -> ChangeSet:
-        """Analyzes incremental changes since the last recorded state."""
-        return self.change_engine.detect_changes()
+    def build_graph(self, force_full: bool = False) -> GraphStats:
+        """Indexes symbols and synchronizes them to the persistent graph database."""
+        self.symbol_index.index_workspace(force_full=force_full)
+        stats = self.graph.sync_from_symbol_index(self.symbol_index)
+        return stats
 
-    def commit_changes(self) -> str:
-        """Updates file hashes cache."""
-        return self.change_engine.commit_hashes()
+    def analyze_impact(self, max_depth: int = 5) -> ImpactReport:
+        """Calculates exact symbol modifications and downstream blast radius."""
+        report = self.impact_engine.analyze_impact(max_depth=max_depth)
+        if self.storage:
+            self.storage.save_json("impact.json", report.model_dump())
+        return report
+
+    def assess_risk(self, impact: Optional[ImpactReport] = None) -> RiskAssessment:
+        """Evaluates deterministic, explainable risk score for current change state."""
+        imp = impact or self.analyze_impact()
+        assessment = self.risk_engine.assess_risk(imp)
+        if self.storage:
+            self.storage.save_json("risk-assessment.json", assessment.model_dump())
+        return assessment
+
+    def plan_tests(self, changed_only: bool = False) -> TestPlan:
+        """Generates an adaptive test plan based on impact and risk analysis."""
+        profile = self.discover()
+        imp = self.analyze_impact()
+        risk = self.assess_risk(imp)
+        plan = self.planner.plan_tests(
+            impact=imp,
+            risk=risk,
+            available_suites=profile.test_suites,
+            changed_only=changed_only,
+        )
+        if self.storage:
+            self.storage.save_json("test-plan.json", plan.model_dump())
+        return plan
 
     def assess_release_readiness(self, report: EvidenceReport) -> ReleaseAssessment:
         """

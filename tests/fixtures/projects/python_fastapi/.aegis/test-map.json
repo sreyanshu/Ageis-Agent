@@ -4,13 +4,14 @@
       "framework": "pytest",
       "runner_cmd": "pytest",
       "test_files": [
-        "tests/test_api.py"
+        "tests/test_api.py",
+        "tests/test_service.py"
       ],
-      "test_count_estimate": 3,
+      "test_count_estimate": 5,
       "test_dirs": [
         "tests"
       ]
     }
   ],
-  "total_estimated_tests": 3
+  "total_estimated_tests": 5
 }

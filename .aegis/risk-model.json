@@ -1,6 +1,6 @@
 {
   "baseline_risk": "LOW",
   "has_tests": true,
-  "test_count": 26,
+  "test_count": 41,
   "database_sensitivity": "HIGH"
 }

@@ -2,8 +2,8 @@
   "schema_version": "1.0.0",
   "project_name": "fastapi-test",
   "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/python_fastapi",
-  "discovered_at": 1790507449.46425,
-  "tree_hash": "40a04e5258f3744bce3feda476da7fbbf92b98c24caba764ba806d404aff32ba",
+  "discovered_at": 1790508414.8270478,
+  "tree_hash": "177a907d13a8d0be7742987d3aa0419ab07ae78a354d3f92a0c6e8d70f1dea67",
   "languages": [
     {
       "name": "Python",
@@ -12,7 +12,7 @@
         ".pyw",
         ".pyi"
       ],
-      "file_count": 2,
+      "file_count": 6,
       "percentage": 100.0,
       "version_hint": "^3.11",
       "primary": true
@@ -89,16 +89,20 @@
         "handler_name": null
       }
     ],
-    "database_models": []
+    "database_models": [
+      "Item",
+      "User"
+    ]
   },
   "test_suites": [
     {
       "framework": "pytest",
       "runner_cmd": "pytest",
       "test_files": [
-        "tests/test_api.py"
+        "tests/test_api.py",
+        "tests/test_service.py"
       ],
-      "test_count_estimate": 3,
+      "test_count_estimate": 5,
       "test_dirs": [
         "tests"
       ]

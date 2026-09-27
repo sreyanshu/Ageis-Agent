@@ -5,15 +5,23 @@
       "runner_cmd": "pytest",
       "test_files": [
         "tests/fixtures/projects/python_fastapi/tests/test_api.py",
+        "tests/fixtures/projects/python_fastapi/tests/test_service.py",
+        "tests/test_adaptive_planner.py",
+        "tests/test_ast_indexers.py",
+        "tests/test_change_impact.py",
         "tests/test_cli.py",
+        "tests/test_cli_phase2.py",
         "tests/test_config.py",
         "tests/test_discovery.py",
         "tests/test_evidence.py",
         "tests/test_executor.py",
         "tests/test_hashing.py",
-        "tests/test_orchestrator.py"
+        "tests/test_orchestrator.py",
+        "tests/test_project_graph.py",
+        "tests/test_risk_engine.py",
+        "tests/test_symbol_index.py"
       ],
-      "test_count_estimate": 23,
+      "test_count_estimate": 37,
       "test_dirs": [
         "tests",
         "tests/fixtures/projects/python_fastapi/tests"
@@ -23,9 +31,10 @@
       "framework": "jest",
       "runner_cmd": "npm test",
       "test_files": [
-        "tests/fixtures/projects/node_react_express/tests/server.spec.js"
+        "tests/fixtures/projects/node_react_express/tests/server.spec.js",
+        "tests/fixtures/projects/node_react_express/tests/userCard.test.tsx"
       ],
-      "test_count_estimate": 2,
+      "test_count_estimate": 3,
       "test_dirs": [
         "tests/fixtures/projects/node_react_express/tests"
       ]
@@ -42,5 +51,5 @@
       ]
     }
   ],
-  "total_estimated_tests": 26
+  "total_estimated_tests": 41
 }

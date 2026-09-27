@@ -32,15 +32,16 @@ def test_cli_impact_and_plan(tmp_path: Path, capsys):
     assert code == 0
     out = capsys.readouterr().out
     changes = json.loads(out)
-    assert "new_module.py" in changes["added_files"]
+    assert "new_module.py" in changes["changed_files"]
+    assert changes["has_changes"] is True
 
     # Plan
-    code = main(["--workspace", str(tmp_path), "--json", "plan", "--risk", "high"])
+    code = main(["--workspace", str(tmp_path), "--json", "plan"])
     assert code == 0
     out = capsys.readouterr().out
     plan = json.loads(out)
-    assert plan["risk_tier"] == "HIGH"
-    assert plan["has_changes"] is True
+    assert "risk_level" in plan
+    assert plan["total_planned"] >= 1
 
 
 def test_cli_test_and_release_check(tmp_path: Path, capsys):

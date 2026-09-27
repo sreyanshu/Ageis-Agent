@@ -1,0 +1,21 @@
+{
+  "report_id": "imp_1790508360800_2db1777a",
+  "timestamp": 1790508360.800544,
+  "tree_hash": "ee51c2b95e95852ef7b936e9646fe902a4550b995e3a0ab1bc5cffa1a7bd80ff",
+  "has_changes": false,
+  "changed_files_count": 0,
+  "changed_files": [],
+  "changed_symbols": [],
+  "affected_components": [],
+  "affected_apis": [],
+  "affected_ui": [],
+  "affected_tests": [],
+  "affected_databases": [],
+  "blast_radius": {
+    "direct_count": 0,
+    "indirect_count": 0,
+    "total_affected": 0,
+    "max_depth": 0
+  },
+  "metadata": {}
+}

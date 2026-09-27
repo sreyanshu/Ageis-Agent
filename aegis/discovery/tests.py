@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 
 class TestSuiteInfo(BaseModel):
+    __test__ = False
     framework: str
     runner_cmd: str
     test_files: List[str] = Field(default_factory=list)
@@ -21,6 +22,7 @@ class TestSuiteInfo(BaseModel):
 
 class TestDetector:
     """Discovers existing test suites across polyglot ecosystems."""
+    __test__ = False
 
     IGNORED_DIRS: Set[str] = {
         ".git", ".aegis", "node_modules", ".venv", "venv", "__pycache__",

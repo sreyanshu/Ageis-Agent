@@ -43,6 +43,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
+    # graph group
+    p_graph = subparsers.add_parser("graph", help="Project Intelligence Graph operations")
+    p_graph_sub = p_graph.add_subparsers(dest="graph_action", help="Graph action: build, inspect, dependencies, impact")
+    
+    p_g_build = p_graph_sub.add_parser("build", help="Build or incrementally update project graph")
+    p_g_build.add_argument("--force", action="store_true", help="Force full re-indexing of all files")
+
+    p_g_inspect = p_graph_sub.add_parser("inspect", help="Inspect a specific node in the graph")
+    p_g_inspect.add_argument("node_id", help="Target node identifier")
+
+    p_g_deps = p_graph_sub.add_parser("dependencies", help="Show upstream dependencies for a node")
+    p_g_deps.add_argument("node_id", help="Target node identifier")
+    p_g_deps.add_argument("--depth", type=int, default=3, help="Max traversal depth")
+
+    p_g_imp = p_graph_sub.add_parser("impact", help="Show downstream dependents for a node")
+    p_g_imp.add_argument("node_id", help="Target node identifier")
+    p_g_imp.add_argument("--depth", type=int, default=5, help="Max traversal depth")
+
     # init
     p_init = subparsers.add_parser("init", help="Initialize Aegis in current workspace (.aegis/)")
 
@@ -54,11 +72,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_ana = subparsers.add_parser("analyze", help="Perform static architecture and dependency analysis")
 
     # impact
-    p_imp = subparsers.add_parser("impact", help="Detect changed files and compute impact")
+    p_imp = subparsers.add_parser("impact", help="Detect changed symbols and compute downstream blast radius")
+    p_imp.add_argument("--depth", type=int, default=5, help="Max traversal depth")
+
+    # risk
+    p_risk = subparsers.add_parser("risk", help="Calculate deterministic, explainable risk assessment")
 
     # plan
     p_plan = subparsers.add_parser("plan", help="Generate adaptive, risk-weighted test plan")
-    p_plan.add_argument("--risk", default="adaptive", choices=["low", "medium", "high", "critical", "adaptive"], help="Risk mode")
+    p_plan.add_argument("--changed-only", action="store_true", help="Only plan tests for impacted code")
 
     # test
     p_test = subparsers.add_parser("test", help="Execute deterministic quality validations")
@@ -155,51 +177,144 @@ def main(args: Optional[List[str]] = None) -> int:
                 print(f"    - Discovered REST Endpoints: {len(profile.interfaces.rest_endpoints)}")
             return 0
 
+        elif parsed.command == "graph":
+            action = getattr(parsed, "graph_action", "build") or "build"
+            if action == "build":
+                force = getattr(parsed, "force", False)
+                stats = engine.build_graph(force_full=force)
+                if parsed.json:
+                    print(stats.model_dump_json(indent=2))
+                else:
+                    print_banner()
+                    print("[+] Project Intelligence Graph Built Successfully")
+                    print(f"    - Total Nodes   : {stats.total_nodes}")
+                    print(f"    - Total Edges   : {stats.total_edges}")
+                    print(f"    - Indexed Files : {stats.file_count}")
+                    print("    - Nodes by Type :")
+                    for k, v in sorted(stats.nodes_by_type.items()):
+                        print(f"      • {k:<15} : {v}")
+                    print("    - Edges by Rel  :")
+                    for k, v in sorted(stats.edges_by_relation.items()):
+                        print(f"      • {k:<18} : {v}")
+                return 0
+
+            elif action == "inspect":
+                node_id = parsed.node_id
+                node = engine.graph.get_node(node_id)
+                if not node:
+                    msg = f"Node not found: {node_id}"
+                    if parsed.json:
+                        print(json.dumps({"error": msg}))
+                    else:
+                        print(f"[-] {msg}")
+                    return 1
+                if parsed.json:
+                    print(node.model_dump_json(indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Node ID   : {node.id}")
+                    print(f"    Name      : {node.name}")
+                    print(f"    Type      : {node.symbol_type.value}")
+                    print(f"    File      : {node.file_path}:{node.line_start or 1}")
+                    if node.signature:
+                        print(f"    Signature : {node.signature}")
+                return 0
+
+            elif action == "dependencies":
+                node_id = parsed.node_id
+                depth = getattr(parsed, "depth", 3)
+                path = engine.graph.traversal.get_upstream_dependencies([node_id], max_depth=depth)
+                if parsed.json:
+                    print(path.model_dump_json(indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Upstream Dependencies for: {node_id} (depth: {depth})")
+                    for n in path.nodes:
+                        if n.id != node_id:
+                            print(f"    <- [{n.symbol_type.value}] {n.id}")
+                return 0
+
+            elif action == "impact":
+                node_id = parsed.node_id
+                depth = getattr(parsed, "depth", 5)
+                path = engine.graph.get_affected_downstream([node_id], max_depth=depth)
+                if parsed.json:
+                    print(path.model_dump_json(indent=2))
+                else:
+                    print_banner()
+                    print(f"[*] Downstream Impact for: {node_id} (depth: {depth})")
+                    for n in path.nodes:
+                        if n.id != node_id:
+                            print(f"    -> [{n.symbol_type.value}] {n.id}")
+                return 0
+
         elif parsed.command == "impact":
-            changes = engine.detect_changes()
+            depth = getattr(parsed, "depth", 5)
+            impact = engine.analyze_impact(max_depth=depth)
             if parsed.json:
-                print(changes.model_dump_json(indent=2))
+                print(impact.model_dump_json(indent=2))
             else:
                 print_banner()
-                print(f"[*] Change Impact Analysis (Tree Hash: {changes.tree_hash[:16]}...)")
-                print(f"    - Added files    : {len(changes.added_files)}")
-                for f in changes.added_files[:10]:
-                    print(f"      + {f}")
-                print(f"    - Modified files : {len(changes.modified_files)}")
-                for f in changes.modified_files[:10]:
-                    print(f"      * {f}")
-                print(f"    - Deleted files  : {len(changes.deleted_files)}")
-                for f in changes.deleted_files[:10]:
-                    print(f"      - {f}")
-                print(f"    - Unchanged files: {len(changes.unchanged_files)}")
+                print(f"[*] Change Impact Assessment (Tree Hash: {impact.tree_hash[:16]}...)")
+                print(f"    - Has Modifications: {impact.has_changes} ({impact.changed_files_count} files changed)")
+                print(f"    - Changed Symbols  : {len(impact.changed_symbols)}")
+                for sym in impact.changed_symbols[:10]:
+                    print(f"      • [{sym.change_type.value}] {sym.name} ({sym.file_path})")
+                
+                print(f"\n[+] Downstream Blast Radius:")
+                print(f"    - Direct Dependents   : {impact.blast_radius.direct_count}")
+                print(f"    - Indirect Dependents : {impact.blast_radius.indirect_count}")
+                print(f"    - Total Blast Radius  : {impact.blast_radius.total_affected}")
+
+                print(f"\n[+] Affected Surfaces:")
+                print(f"    - Affected APIs       : {len(impact.affected_apis)}")
+                for a in impact.affected_apis:
+                    print(f"      • {a.name} ({a.confidence.value})")
+                print(f"    - Affected UI         : {len(impact.affected_ui)}")
+                for u in impact.affected_ui:
+                    print(f"      • {u.name} ({u.confidence.value})")
+                print(f"    - Affected Databases  : {len(impact.affected_databases)}")
+                for d in impact.affected_databases:
+                    print(f"      • {d.name} ({d.confidence.value})")
+                print(f"    - Affected Tests      : {len(impact.affected_tests)}")
+                for t in impact.affected_tests:
+                    print(f"      • {t.name} ({t.confidence.value})")
+            return 0
+
+        elif parsed.command == "risk":
+            risk = engine.assess_risk()
+            if parsed.json:
+                print(risk.model_dump_json(indent=2))
+            else:
+                print_banner()
+                print("=" * 60)
+                print(f"AEGIS ADAPTIVE RISK ASSESSMENT: {risk.level.value} (Score: {risk.composite_score:.2f}/1.00)")
+                print("=" * 60)
+                print("Risk Factors Breakdown:")
+                for f in risk.factors:
+                    print(f"  • {f.factor_name:<25} [Weight: {f.weight:.2f}, Score: {f.raw_score:.2f}] -> {f.evidence}")
+                print("\nKey Rationale:")
+                for r in risk.reasons:
+                    print(f"  - {r}")
+                print(f"\nRecommendation: {risk.recommendation}")
             return 0
 
         elif parsed.command == "plan":
-            profile = engine.discover()
-            changes = engine.detect_changes()
-            plan = {
-                "risk_tier": parsed.risk.upper(),
-                "has_changes": changes.has_changes,
-                "changed_files_count": len(changes.added_files) + len(changes.modified_files),
-                "planned_suites": [
-                    {
-                        "category": ts.framework,
-                        "runner_cmd": ts.runner_cmd,
-                        "test_count": ts.test_count_estimate,
-                        "selection_reason": "High regression risk" if changes.has_changes else "Baseline verification",
-                    }
-                    for ts in profile.test_suites
-                ],
-            }
+            changed_only = getattr(parsed, "changed_only", False)
+            plan = engine.plan_tests(changed_only=changed_only)
             if parsed.json:
-                print(json.dumps(plan, indent=2))
+                print(plan.model_dump_json(indent=2))
             else:
                 print_banner()
-                print(f"[*] Adaptive Test Plan (Risk Tier: {plan['risk_tier']})")
-                print(f"    - Changes Detected: {plan['has_changes']} ({plan['changed_files_count']} files changed)")
-                print(f"    - Planned Validations:")
-                for s in plan["planned_suites"]:
-                    print(f"      • [{s['category']}] -> {s['runner_cmd']} (~{s['test_count']} tests) [{s['selection_reason']}]")
+                print(f"[*] Adaptive Test Plan (Risk Tier: {plan.risk_level.value})")
+                print(f"    - Selected Validations : {plan.total_planned}")
+                for p in plan.selected_tests:
+                    print(f"      [P:{p.priority:>3}] [{p.category}] -> {p.runner_cmd} ({p.selection_reason})")
+                if plan.skipped_tests:
+                    print(f"    - Safely Skipped Suites: {plan.total_skipped}")
+                    for s in plan.skipped_tests:
+                        print(f"      [SKIP] [{s.category}] -> {s.name} ({s.skip_reason})")
+                print(f"    - Est. Execution Time  : {plan.estimated_total_time_ms:.1f} ms")
             return 0
 
         elif parsed.command == "test":

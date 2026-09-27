@@ -4,13 +4,14 @@
       "framework": "jest",
       "runner_cmd": "npm test",
       "test_files": [
-        "tests/server.spec.js"
+        "tests/server.spec.js",
+        "tests/userCard.test.tsx"
       ],
-      "test_count_estimate": 2,
+      "test_count_estimate": 3,
       "test_dirs": [
         "tests"
       ]
     }
   ],
-  "total_estimated_tests": 2
+  "total_estimated_tests": 3
 }

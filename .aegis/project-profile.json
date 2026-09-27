@@ -2,8 +2,8 @@
   "schema_version": "1.0.0",
   "project_name": "Ageis Agent",
   "root_path": "/Users/apple/Ageis Agent",
-  "discovered_at": 1790507458.74472,
-  "tree_hash": "f687ade8ccb24367b26031a554a22c03e35c3026eaa02ceaeee3b32b56b4c410",
+  "discovered_at": 1790508345.769514,
+  "tree_hash": "ee51c2b95e95852ef7b936e9646fe902a4550b995e3a0ab1bc5cffa1a7bd80ff",
   "languages": [
     {
       "name": "Python",
@@ -12,31 +12,18 @@
         ".pyw",
         ".pyi"
       ],
-      "file_count": 30,
-      "percentage": 85.71,
+      "file_count": 56,
+      "percentage": 83.58,
       "version_hint": ">=3.9",
       "primary": true
-    },
-    {
-      "name": "JavaScript",
-      "extensions": [
-        ".js",
-        ".jsx",
-        ".mjs",
-        ".cjs"
-      ],
-      "file_count": 2,
-      "percentage": 5.71,
-      "version_hint": null,
-      "primary": false
     },
     {
       "name": "Go",
       "extensions": [
         ".go"
       ],
-      "file_count": 2,
-      "percentage": 5.71,
+      "file_count": 5,
+      "percentage": 7.46,
       "version_hint": null,
       "primary": false
     },
@@ -48,8 +35,21 @@
         ".mts",
         ".cts"
       ],
-      "file_count": 1,
-      "percentage": 2.86,
+      "file_count": 4,
+      "percentage": 5.97,
+      "version_hint": null,
+      "primary": false
+    },
+    {
+      "name": "JavaScript",
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ],
+      "file_count": 2,
+      "percentage": 2.99,
       "version_hint": null,
       "primary": false
     }
@@ -105,6 +105,27 @@
       },
       {
         "method": "GET",
+        "path": "/path",
+        "source_file": "aegis/indexer/python_indexer.py",
+        "line_number": 356,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/users",
+        "source_file": "aegis/indexer/python_indexer.py",
+        "line_number": 446,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/users",
+        "source_file": "tests/test_ast_indexers.py",
+        "line_number": 21,
+        "handler_name": null
+      },
+      {
+        "method": "GET",
         "path": "/health",
         "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
         "line_number": 5,
@@ -142,30 +163,50 @@
     "database_models": [
       "AIConfig",
       "AegisConfig",
+      "AffectedEntity",
       "AgentConfig",
       "ArtifactRef",
+      "BlastRadius",
       "BuildSystemInfo",
       "ChangeSet",
+      "ChangedSymbol",
       "EndpointInfo",
       "Event",
       "EvidenceReport",
       "ExecutionConfig",
       "ExecutionResult",
       "FrameworkInfo",
+      "GraphEdge",
+      "GraphNode",
+      "GraphStats",
+      "ImpactReport",
+      "IndexedFile",
       "InfrastructureInfo",
       "InterfaceMap",
+      "Item",
       "LanguageInfo",
       "NormalizedError",
+      "PlannedTest",
       "PolicyCheckResult",
       "ProjectConfig",
       "ProjectProfile",
+      "Provenance",
+      "Relationship",
       "ReleaseAssessment",
       "ReleasePolicyConfig",
+      "RiskAssessment",
+      "RiskFactor",
       "RunnerCapability",
+      "SkippedTest",
       "StorageConfig",
+      "Symbol",
+      "SymbolFileMeta",
+      "SymbolIndexSnapshot",
+      "TestPlan",
       "TestResult",
       "TestSuiteInfo",
       "TestingConfig",
+      "TraversalPath",
       "User"
     ]
   },
@@ -175,15 +216,23 @@
       "runner_cmd": "pytest",
       "test_files": [
         "tests/fixtures/projects/python_fastapi/tests/test_api.py",
+        "tests/fixtures/projects/python_fastapi/tests/test_service.py",
+        "tests/test_adaptive_planner.py",
+        "tests/test_ast_indexers.py",
+        "tests/test_change_impact.py",
         "tests/test_cli.py",
+        "tests/test_cli_phase2.py",
         "tests/test_config.py",
         "tests/test_discovery.py",
         "tests/test_evidence.py",
         "tests/test_executor.py",
         "tests/test_hashing.py",
-        "tests/test_orchestrator.py"
+        "tests/test_orchestrator.py",
+        "tests/test_project_graph.py",
+        "tests/test_risk_engine.py",
+        "tests/test_symbol_index.py"
       ],
-      "test_count_estimate": 23,
+      "test_count_estimate": 37,
       "test_dirs": [
         "tests",
         "tests/fixtures/projects/python_fastapi/tests"
@@ -193,9 +242,10 @@
       "framework": "jest",
       "runner_cmd": "npm test",
       "test_files": [
-        "tests/fixtures/projects/node_react_express/tests/server.spec.js"
+        "tests/fixtures/projects/node_react_express/tests/server.spec.js",
+        "tests/fixtures/projects/node_react_express/tests/userCard.test.tsx"
       ],
-      "test_count_estimate": 2,
+      "test_count_estimate": 3,
       "test_dirs": [
         "tests/fixtures/projects/node_react_express/tests"
       ]

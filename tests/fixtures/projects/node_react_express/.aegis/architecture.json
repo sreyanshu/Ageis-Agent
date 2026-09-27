@@ -1,7 +1,20 @@
 {
   "project_name": "node_react_express",
-  "primary_language": "JavaScript",
+  "primary_language": "TypeScript",
   "languages": [
+    {
+      "name": "TypeScript",
+      "extensions": [
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts"
+      ],
+      "file_count": 4,
+      "percentage": 66.67,
+      "version_hint": ">=18.0.0",
+      "primary": true
+    },
     {
       "name": "JavaScript",
       "extensions": [
@@ -11,19 +24,6 @@
         ".cjs"
       ],
       "file_count": 2,
-      "percentage": 66.67,
-      "version_hint": ">=18.0.0",
-      "primary": true
-    },
-    {
-      "name": "TypeScript",
-      "extensions": [
-        ".ts",
-        ".tsx",
-        ".mts",
-        ".cts"
-      ],
-      "file_count": 1,
       "percentage": 33.33,
       "version_hint": ">=18.0.0",
       "primary": false

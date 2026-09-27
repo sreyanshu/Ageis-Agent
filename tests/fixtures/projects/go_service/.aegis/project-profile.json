@@ -2,15 +2,15 @@
   "schema_version": "1.0.0",
   "project_name": "go_service",
   "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/go_service",
-  "discovered_at": 1790507449.469472,
-  "tree_hash": "61c3d486fdfed02b9a5e2790f4218ae99c8410028183d09a70fb7f4f0e97efa0",
+  "discovered_at": 1790508414.833173,
+  "tree_hash": "9cf59a216edba7ced08a3b13f9f236e0c60bc2b421598258dc1f07380800b1e0",
   "languages": [
     {
       "name": "Go",
       "extensions": [
         ".go"
       ],
-      "file_count": 2,
+      "file_count": 5,
       "percentage": 100.0,
       "version_hint": "1.22.0",
       "primary": true

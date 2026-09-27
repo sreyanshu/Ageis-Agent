@@ -9,31 +9,18 @@
         ".pyw",
         ".pyi"
       ],
-      "file_count": 30,
-      "percentage": 85.71,
+      "file_count": 56,
+      "percentage": 83.58,
       "version_hint": ">=3.9",
       "primary": true
-    },
-    {
-      "name": "JavaScript",
-      "extensions": [
-        ".js",
-        ".jsx",
-        ".mjs",
-        ".cjs"
-      ],
-      "file_count": 2,
-      "percentage": 5.71,
-      "version_hint": null,
-      "primary": false
     },
     {
       "name": "Go",
       "extensions": [
         ".go"
       ],
-      "file_count": 2,
-      "percentage": 5.71,
+      "file_count": 5,
+      "percentage": 7.46,
       "version_hint": null,
       "primary": false
     },
@@ -45,8 +32,21 @@
         ".mts",
         ".cts"
       ],
-      "file_count": 1,
-      "percentage": 2.86,
+      "file_count": 4,
+      "percentage": 5.97,
+      "version_hint": null,
+      "primary": false
+    },
+    {
+      "name": "JavaScript",
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ],
+      "file_count": 2,
+      "percentage": 2.99,
       "version_hint": null,
       "primary": false
     }

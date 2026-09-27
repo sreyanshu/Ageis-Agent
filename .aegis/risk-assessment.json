@@ -1,0 +1,18 @@
+{
+  "level": "LOW",
+  "composite_score": 0.0,
+  "generated_at": 1790508360.800805,
+  "factors": [
+    {
+      "factor_name": "change_magnitude",
+      "weight": 0.2,
+      "raw_score": 0.0,
+      "weighted_score": 0.0,
+      "evidence": "No modifications detected in workspace"
+    }
+  ],
+  "reasons": [
+    "Zero code or configuration changes detected"
+  ],
+  "recommendation": "Targeted sanity verification only"
+}

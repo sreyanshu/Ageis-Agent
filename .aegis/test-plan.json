@@ -1,0 +1,42 @@
+{
+  "plan_id": "plan_1790508345773_019162de",
+  "timestamp": 1790508345.773123,
+  "risk_level": "LOW",
+  "selected_tests": [
+    {
+      "test_id": "test.pytest.regression",
+      "name": "pytest Suite",
+      "category": "unit",
+      "runner_cmd": "pytest",
+      "priority": 50,
+      "selection_reason": "Scheduled for LOW risk validation",
+      "estimated_duration_ms": 740.0
+    },
+    {
+      "test_id": "test.jest.regression",
+      "name": "jest Suite",
+      "category": "unit",
+      "runner_cmd": "npm test",
+      "priority": 50,
+      "selection_reason": "Scheduled for LOW risk validation",
+      "estimated_duration_ms": 60.0
+    },
+    {
+      "test_id": "test.go test.regression",
+      "name": "go test Suite",
+      "category": "unit",
+      "runner_cmd": "go test -v ./...",
+      "priority": 50,
+      "selection_reason": "Scheduled for LOW risk validation",
+      "estimated_duration_ms": 20.0
+    }
+  ],
+  "skipped_tests": [],
+  "total_planned": 3,
+  "total_skipped": 0,
+  "estimated_total_time_ms": 820.0,
+  "metadata": {
+    "has_changes": false,
+    "risk_score": 0.0
+  }
+}

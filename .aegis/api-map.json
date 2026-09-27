@@ -15,6 +15,27 @@
     },
     {
       "method": "GET",
+      "path": "/path",
+      "source_file": "aegis/indexer/python_indexer.py",
+      "line_number": 356,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/users",
+      "source_file": "aegis/indexer/python_indexer.py",
+      "line_number": 446,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users",
+      "source_file": "tests/test_ast_indexers.py",
+      "line_number": 21,
+      "handler_name": null
+    },
+    {
+      "method": "GET",
       "path": "/health",
       "source_file": "tests/fixtures/projects/python_fastapi/app/main.py",
       "line_number": 5,
