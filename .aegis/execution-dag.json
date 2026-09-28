@@ -1,6 +1,6 @@
 {
-  "dag_id": "dag_1790509071914_6c778a64",
-  "created_at": 1790509071.914828,
+  "dag_id": "dag_1790510150505_1bad36d4",
+  "created_at": 1790510150.505604,
   "nodes": {
     "dag.sanity.preflight": {
       "node_id": "dag.sanity.preflight",
@@ -46,16 +46,16 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.164675208,
-      "end_time": 0.164709541
+      "start_time": 0.484673208,
+      "end_time": 0.484697916
     },
     "dag.unit.0": {
       "node_id": "dag.unit.0",
       "runner_name": "native_unit_runner",
       "category": "unit",
-      "test_id": "test.pytest.regression",
-      "name": "pytest Suite",
-      "priority": 50,
+      "test_id": "test.pytest.impacted",
+      "name": "pytest Impacted Suite",
+      "priority": 100,
       "dependencies": [
         "dag.sanity.preflight"
       ],
@@ -95,16 +95,16 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.16479275,
-      "end_time": 0.164819583
+      "start_time": 0.485010875,
+      "end_time": 0.485043333
     },
     "dag.unit.1": {
       "node_id": "dag.unit.1",
       "runner_name": "native_unit_runner",
       "category": "unit",
-      "test_id": "test.jest.regression",
+      "test_id": "test.jest.suite",
       "name": "jest Suite",
-      "priority": 50,
+      "priority": 80,
       "dependencies": [
         "dag.sanity.preflight"
       ],
@@ -144,16 +144,16 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.164886708,
-      "end_time": 0.164905708
+      "start_time": 0.485110541,
+      "end_time": 0.485130791
     },
     "dag.unit.2": {
       "node_id": "dag.unit.2",
       "runner_name": "native_unit_runner",
       "category": "unit",
-      "test_id": "test.go test.regression",
+      "test_id": "test.go test.suite",
       "name": "go test Suite",
-      "priority": 50,
+      "priority": 80,
       "dependencies": [
         "dag.sanity.preflight"
       ],
@@ -193,8 +193,8 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.1649565,
-      "end_time": 0.164973958
+      "start_time": 0.485180916,
+      "end_time": 0.485198791
     },
     "dag.api.contract": {
       "node_id": "dag.api.contract",
@@ -202,7 +202,7 @@
       "category": "api",
       "test_id": "api.contract_suite",
       "name": "Contract API Validation Suite",
-      "priority": 60,
+      "priority": 80,
       "dependencies": [
         "dag.sanity.preflight"
       ],
@@ -434,8 +434,8 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.165024375,
-      "end_time": 0.1651075
+      "start_time": 0.485246916,
+      "end_time": 0.485334333
     },
     "dag.integration.suite": {
       "node_id": "dag.integration.suite",
@@ -486,8 +486,8 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.165606125,
-      "end_time": 0.165617916
+      "start_time": 0.48613975,
+      "end_time": 0.486153833
     },
     "dag.e2e.journeys": {
       "node_id": "dag.e2e.journeys",
@@ -535,8 +535,8 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.165683083,
-      "end_time": 0.1657005
+      "start_time": 0.486210916,
+      "end_time": 0.486229416
     },
     "dag.ui.visual": {
       "node_id": "dag.ui.visual",
@@ -584,8 +584,8 @@
       ],
       "failure_classification": null,
       "block_reason": null,
-      "start_time": 0.165765041,
-      "end_time": 0.165778916
+      "start_time": 0.486282,
+      "end_time": 0.48629275
     }
   }
 }

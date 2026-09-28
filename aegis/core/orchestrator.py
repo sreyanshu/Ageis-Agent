@@ -71,7 +71,13 @@ class AegisEngine:
             default_timeout_seconds=self.config.execution.timeout_seconds,
         )
 
-        self.discovery_engine = ProjectDiscoveryEngine(self.workspace_root, storage=self.storage)
+        from aegis.adapters.registry import AdapterRegistry, default_adapter_registry
+        self.adapter_registry = default_adapter_registry
+        self.discovery_engine = ProjectDiscoveryEngine(
+            self.workspace_root,
+            storage=self.storage,
+            adapter_registry=self.adapter_registry,
+        )
         self.change_engine = IncrementalChangeEngine(self.workspace_root, storage=self.storage)
         self.symbol_index = SymbolIndex(self.workspace_root, storage=self.storage)
         self.graph = ProjectGraph(self.workspace_root)
@@ -366,3 +372,100 @@ class AegisEngine:
         )
 
         return assessment
+
+    def get_init_summary(self) -> Dict[str, Any]:
+        """Gathers deterministic summary data for the onboarding CLI."""
+        profile = self.discover()
+        graph_stats = self.build_graph()
+        active_adapters = self.adapter_registry.detect_active_adapters(self.workspace_root)
+
+        return {
+            "project_name": profile.project_name,
+            "root_path": profile.root_path,
+            "languages": [l.name for l in profile.languages],
+            "frameworks": [f.name for f in profile.frameworks],
+            "infrastructure": {
+                "has_docker": profile.infrastructure.has_docker,
+                "dockerfiles": len(profile.infrastructure.dockerfiles),
+                "has_compose": profile.infrastructure.has_compose,
+                "compose_files": len(profile.infrastructure.compose_files),
+                "databases": profile.infrastructure.detected_databases,
+                "queues": profile.infrastructure.detected_queues,
+                "ci_providers": profile.infrastructure.ci_providers,
+            },
+            "test_systems": [ts.framework for ts in profile.test_suites],
+            "total_estimated_tests": sum(ts.test_count_estimate for ts in profile.test_suites),
+            "discovered_test_files": sum(len(ts.test_files) for ts in profile.test_suites),
+            "api_surface": {
+                "rest_endpoints": len(profile.interfaces.rest_endpoints),
+                "has_openapi": profile.interfaces.has_openapi,
+                "has_graphql": profile.interfaces.has_graphql,
+                "has_grpc": profile.interfaces.has_grpc,
+            },
+            "architecture": {
+                "symbols_indexed": graph_stats.total_nodes,
+                "dependency_edges": graph_stats.total_edges,
+                "indexed_files": graph_stats.file_count,
+            },
+            "capabilities_count": len(profile.capabilities),
+            "active_adapters": [a.name for a in active_adapters],
+        }
+
+    def list_capabilities(self) -> List[Any]:
+        """Returns all resolved capabilities for the workspace."""
+        profile = self.discover()
+        return profile.capabilities
+
+    def list_adapters(self) -> List[Dict[str, Any]]:
+        """Returns all registered adapters with active status."""
+        active_ids = {a.adapter_id for a in self.adapter_registry.detect_active_adapters(self.workspace_root)}
+        results = []
+        for adapter in self.adapter_registry.list_adapters():
+            results.append({
+                "adapter_id": adapter.adapter_id,
+                "name": adapter.name,
+                "category": adapter.category,
+                "version": adapter.version,
+                "active": adapter.adapter_id in active_ids,
+            })
+        return results
+
+    def check(
+        self,
+        changed_only: bool = True,
+        dry_run: bool = False,
+        ci: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        Orchestrates full unified verification workflow:
+        DISCOVER -> IMPACT -> RISK -> PLAN -> VALIDATE -> QUALITY -> EVIDENCE -> RELEASE DECISION
+        """
+        profile = self.discover()
+        impact = self.analyze_impact()
+        risk = self.assess_risk(impact)
+        plan = self.planner.plan_tests(
+            impact=impact,
+            risk=risk,
+            available_suites=profile.test_suites,
+            changed_only=changed_only,
+            history_store=self.history_store,
+            explain=True,
+        )
+        report = self.execute_plan(test_plan=plan, dry_run=dry_run, fail_fast=True)
+        quality_results = self.execute_quality(dimension="all", dry_run=dry_run)
+        release_assessment = self.assess_release_readiness(report, quality_results=quality_results)
+
+        return {
+            "project_name": profile.project_name,
+            "tree_hash": profile.tree_hash,
+            "risk_level": risk.level.value,
+            "total_planned_tests": plan.total_planned,
+            "tests_executed": report.total_tests,
+            "tests_passed": report.passed,
+            "tests_failed": report.failed,
+            "quality_dimensions_evaluated": list(quality_results.keys()),
+            "release_verdict": release_assessment.verdict.value,
+            "policy_checks": [c.model_dump() for c in release_assessment.policy_checks],
+            "reasons": release_assessment.reasons,
+        }
+

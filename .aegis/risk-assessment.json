@@ -1,21 +1,21 @@
 {
-  "level": "LOW",
-  "composite_score": 0.1,
-  "generated_at": 1790509071.903828,
+  "level": "HIGH",
+  "composite_score": 0.6,
+  "generated_at": 1790510150.472946,
   "factors": [
     {
       "factor_name": "change_magnitude",
       "weight": 0.2,
-      "raw_score": 0.5,
-      "weighted_score": 0.1,
-      "evidence": "3 changed file(s), 1 changed symbol(s)"
+      "raw_score": 1.0,
+      "weighted_score": 0.2,
+      "evidence": "57 changed file(s), 266 changed symbol(s)"
     },
     {
       "factor_name": "blast_radius",
       "weight": 0.25,
-      "raw_score": 0.0,
-      "weighted_score": 0.0,
-      "evidence": "0 direct dependents, 0 indirect dependents"
+      "raw_score": 1.0,
+      "weighted_score": 0.25,
+      "evidence": "10 direct dependents, 0 indirect dependents"
     },
     {
       "factor_name": "api_exposure",
@@ -34,13 +34,15 @@
     {
       "factor_name": "signature_breaking_risk",
       "weight": 0.15,
-      "raw_score": 0.0,
-      "weighted_score": 0.0,
-      "evidence": "0 function or method signature change(s)"
+      "raw_score": 1.0,
+      "weighted_score": 0.15,
+      "evidence": "3 function or method signature change(s)"
     }
   ],
   "reasons": [
-    "Low complexity isolated modification"
+    "High modification volume: 57 files changed.",
+    "Significant downstream blast radius (10 dependents affected).",
+    "Interface contracts modified (3 signature change(s))."
   ],
-  "recommendation": "Targeted unit tests only"
+  "recommendation": "Targeted tests + downstream integration validation required"
 }

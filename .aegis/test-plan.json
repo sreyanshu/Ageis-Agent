@@ -1,42 +1,80 @@
 {
-  "plan_id": "plan_1790509071903_4f262758",
-  "timestamp": 1790509071.903947,
-  "risk_level": "LOW",
+  "plan_id": "plan_1790510150490_b5fe5d8c",
+  "timestamp": 1790510150.4903731,
+  "risk_level": "HIGH",
   "selected_tests": [
     {
-      "test_id": "test.pytest.regression",
-      "name": "pytest Suite",
+      "test_id": "test.pytest.impacted",
+      "name": "pytest Impacted Suite",
       "category": "unit",
       "runner_cmd": "pytest",
-      "priority": 50,
-      "selection_reason": "Scheduled for LOW risk validation",
-      "estimated_duration_ms": 940.0
+      "priority": 100,
+      "selection_reason": "Directly exercises changed code across 8 file(s).; Test framework: pytest",
+      "estimated_duration_ms": 1600.0
     },
     {
-      "test_id": "test.jest.regression",
+      "test_id": "test.jest.suite",
       "name": "jest Suite",
       "category": "unit",
       "runner_cmd": "npm test",
-      "priority": 50,
-      "selection_reason": "Scheduled for LOW risk validation",
+      "priority": 80,
+      "selection_reason": "Scheduled for HIGH risk validation.; Test count: ~3",
       "estimated_duration_ms": 60.0
     },
     {
-      "test_id": "test.go test.regression",
+      "test_id": "test.go test.suite",
       "name": "go test Suite",
       "category": "unit",
       "runner_cmd": "go test -v ./...",
-      "priority": 50,
-      "selection_reason": "Scheduled for LOW risk validation",
+      "priority": 80,
+      "selection_reason": "Scheduled for HIGH risk validation.; Test count: ~1",
       "estimated_duration_ms": 20.0
     }
   ],
   "skipped_tests": [],
   "total_planned": 3,
   "total_skipped": 0,
-  "estimated_total_time_ms": 1020.0,
+  "estimated_total_time_ms": 1680.0,
+  "explanations": [
+    {
+      "test_id": "test.pytest.impacted",
+      "selected": true,
+      "priority": 100,
+      "value_score": 95.0,
+      "reasons": [
+        "Directly exercises changed code across 8 file(s).",
+        "Test framework: pytest"
+      ],
+      "skip_reason": null,
+      "estimated_duration_ms": 1600.0
+    },
+    {
+      "test_id": "test.jest.suite",
+      "selected": true,
+      "priority": 80,
+      "value_score": 50.0,
+      "reasons": [
+        "Scheduled for HIGH risk validation.",
+        "Test count: ~3"
+      ],
+      "skip_reason": null,
+      "estimated_duration_ms": 60.0
+    },
+    {
+      "test_id": "test.go test.suite",
+      "selected": true,
+      "priority": 80,
+      "value_score": 50.0,
+      "reasons": [
+        "Scheduled for HIGH risk validation.",
+        "Test count: ~1"
+      ],
+      "skip_reason": null,
+      "estimated_duration_ms": 20.0
+    }
+  ],
   "metadata": {
     "has_changes": true,
-    "risk_score": 0.1
+    "risk_score": 0.6
   }
 }

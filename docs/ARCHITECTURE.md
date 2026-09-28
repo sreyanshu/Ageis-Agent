@@ -121,9 +121,12 @@ aegis/
 │   ├── collector.py        # Structured evidence accumulator & trace correlator
 │   └── normalizer.py       # Stack trace, log, and HTTP error normalizer/fingerprinter
 ├── adapters/
-│   └── base.py             # Base TestRunner and ToolAdapter contracts (NOT_IMPLEMENTED markers)
+│   ├── base.py             # AegisAdapter contract, DetectionResult, DiscoveryResult, ValidationResult
+│   ├── capabilities.py     # Universal Capability taxonomy (CapabilityType, CapabilityStatus, ProjectCapability)
+│   ├── registry.py         # Centralized AdapterRegistry with category filtering and auto-detection
+│   └── builtin/            # Builtin adapters for Python, JS/TS, Go, Pytest, Vitest, Jest, Go Test, Web, Docker, Quality
 └── cli/
-    └── main.py             # Unified CLI entrypoint supporting graph, impact, risk, plan, test
+    └── main.py             # Unified CLI entrypoint supporting init, project, capabilities, adapters, check, release
 ```
 
 ---
@@ -134,7 +137,8 @@ aegis/
 - [x] **Phase 2 (Project Intelligence & Graph)**: AST parsing (Python, TS/JS, Go), SQLite Project Graph, Change Impact Engine, Adaptive Risk Engine, Test Planning Foundation.
 - [x] **Phase 3 (Universal Test Execution Engine & DAG)**: Universal Runner Protocol & Registry, Execution DAG & Scheduler, Fast-Fail Cascading, Execution Caching, Native Unit (pytest/vitest/jest/go test), Sanity Preflight, Contract-Aware API & Bounded Fuzzing, Integration, E2E Journey, and UI Visual Baseline Runners.
 - [x] **Phase 4 (Quality Dimensions Engine)**: Unified Quality Dimensions Contract, Accessibility (WCAG & axe-core adapter), Security (SARIF v2.1.0 parser & normalizer), Performance (deterministic benchmarks & environment fingerprinting), UX Heuristics, Quality Planner, and Release Policy Gate.
-- [x] **Phase 5 (Failure Intelligence, Historical Learning & Optimization)**: Persistent Historical Knowledge Store (.aegis/history/), Volatile Noise Normalization & Secret Redaction, Failure Clustering & Deterministic Classification, Flakiness Engine, Test Effectiveness & Value Model, Redundancy Analysis, Change-to-Failure Correlations, Adaptive Test Selection 2.0 with Explanations, and AI Reasoning Boundary.
+- [x] **Phase 5 & 5.5 (Failure Intelligence, Historical Learning & Optimization)**: Persistent Historical Knowledge Store (.aegis/history/), Volatile Noise Normalization & Secret Redaction, Failure Clustering & Deterministic Classification, Flakiness Engine, Test Effectiveness & Value Model, Redundancy Analysis, Change-to-Failure Correlations, Adaptive Test Selection 2.0 with Explanations, and AI Reasoning Boundary.
+- [x] **Universal Onboarding & Adapter Architecture**: Canonical Project Profile schema 2.0.0, Universal Capability Model, Adapter Registry, Built-in multi-stack adapters (Python, JS/TS, Go, Web, Infra, Quality), Safe non-destructive reinitialization, Unified `aegis init` / `aegis check` / `aegis release` pipeline.
 - [ ] **Phase 6 (Controlled Self-Healing)**: Bounded patch proposal loops, patch verification, regression validation.
-- [ ] **Phase 7 (Release Gate)**: Deterministic policy evaluator (pass/fail release readiness verdict).
+- [ ] **Phase 7 (Release Gate Integrations)**: Extended CI/CD policy gates and environment matrix checks.
 - [ ] **Phase 8 (Integrations)**: MCP Server, Antigravity IDE adapter, GitHub Actions CI action, REST API.

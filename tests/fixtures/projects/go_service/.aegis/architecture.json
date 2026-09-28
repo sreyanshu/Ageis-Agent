@@ -36,5 +36,80 @@
     "ci_providers": [],
     "detected_databases": [],
     "detected_queues": []
-  }
+  },
+  "capabilities": [
+    {
+      "id": "cap_lang_go",
+      "type": "LANGUAGE",
+      "name": "Go",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Found Go module manifest: go.mod",
+        "Discovered 5 Go source files"
+      ],
+      "source": "GoAdapter",
+      "discovered_at": 1790528205.44576,
+      "metadata": {}
+    },
+    {
+      "id": "cap_build_go_modules",
+      "type": "BUILD",
+      "name": "Go Modules",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "go.mod module manifest"
+      ],
+      "source": "GoAdapter",
+      "discovered_at": 1790528205.445766,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_unit_gotest",
+      "type": "TEST_UNIT",
+      "name": "Go Unit & Integration Testing",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "Discovered 1 Go test files (1 test functions)"
+      ],
+      "source": "GoTestAdapter",
+      "discovered_at": 1790528205.44629,
+      "metadata": {}
+    },
+    {
+      "id": "cap_fw_gin",
+      "type": "FRAMEWORK",
+      "name": "Gin",
+      "status": "SUPPORTED",
+      "confidence": 0.95,
+      "evidence": [
+        "Detected Gin via import/package manifest"
+      ],
+      "source": "WebFrameworkAdapter",
+      "discovered_at": 1790528205.4464011,
+      "metadata": {}
+    },
+    {
+      "id": "cap_infra_docker",
+      "type": "CONTAINER",
+      "name": "Docker",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "Dockerfile present in workspace"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.446544,
+      "metadata": {}
+    }
+  ],
+  "active_adapters": [
+    "lang_go",
+    "test_gotest",
+    "fw_web",
+    "infra_docker"
+  ],
+  "components": []
 }

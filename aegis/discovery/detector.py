@@ -1,7 +1,7 @@
 """
 Aegis Project Discovery Coordinator
-Aggregates language, framework, build system, infrastructure, interface, and test detectors
-to construct the comprehensive Project Profile and machine-readable artifacts in .aegis/.
+Aggregates language, framework, build system, infrastructure, interface, test detectors,
+and universal adapter capability resolution to construct the comprehensive Project Profile.
 """
 
 from __future__ import annotations
@@ -18,13 +18,15 @@ from aegis.discovery.build_systems import BuildSystemDetector, BuildSystemInfo
 from aegis.discovery.infrastructure import InfrastructureDetector, InfrastructureInfo
 from aegis.discovery.interfaces import InterfaceDetector, InterfaceMap
 from aegis.discovery.tests import TestDetector, TestSuiteInfo
+from aegis.adapters.capabilities import ProjectCapability, CapabilityType, CapabilityStatus
+from aegis.adapters.registry import AdapterRegistry, default_adapter_registry
 from aegis.storage.base import StorageBackend
 from aegis.storage.hashing import ContentHasher
 
 
 class ProjectProfile(BaseModel):
-    """Unified machine-verifiable description of the target workspace."""
-    schema_version: str = "1.0.0"
+    """Unified machine-verifiable canonical description of the target workspace."""
+    schema_version: str = "2.0.0"
     project_name: str
     root_path: str
     discovered_at: float = Field(default_factory=time.time)
@@ -35,6 +37,10 @@ class ProjectProfile(BaseModel):
     infrastructure: InfrastructureInfo = Field(default_factory=InfrastructureInfo)
     interfaces: InterfaceMap = Field(default_factory=InterfaceMap)
     test_suites: List[TestSuiteInfo] = Field(default_factory=list)
+    capabilities: List[ProjectCapability] = Field(default_factory=list)
+    active_adapters: List[str] = Field(default_factory=list)
+    components: List[Dict[str, Any]] = Field(default_factory=list)
+    confidence_scores: Dict[str, float] = Field(default_factory=dict)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     @property
@@ -46,15 +52,17 @@ class ProjectProfile(BaseModel):
 
 
 class ProjectDiscoveryEngine:
-    """Coordinates full repository inspection and produces machine-readable profile maps."""
+    """Coordinates full repository inspection, universal adapter detection, and capability resolution."""
 
     def __init__(
         self,
         workspace_root: Path | str,
         storage: Optional[StorageBackend] = None,
+        adapter_registry: Optional[AdapterRegistry] = None,
     ) -> None:
         self.workspace_root = Path(workspace_root).resolve()
         self.storage = storage
+        self.adapter_registry = adapter_registry or default_adapter_registry
         self.lang_detector = LanguageDetector()
         self.fw_detector = FrameworkDetector()
         self.build_detector = BuildSystemDetector()
@@ -77,7 +85,24 @@ class ProjectDiscoveryEngine:
         interfaces = self.iface_detector.detect(self.workspace_root)
         test_suites = self.test_detector.detect(self.workspace_root)
 
+        # Phase 6: Universal Adapter & Capability Resolution
+        active_adapters = self.adapter_registry.detect_active_adapters(self.workspace_root)
+        capabilities = self.adapter_registry.resolve_capabilities(self.workspace_root)
+
+        # Monorepo / Multi-component structure detection
+        components = self._detect_components()
+
+        # Confidence scores
+        confidences = {
+            "languages": 1.0 if languages else 0.0,
+            "frameworks": 1.0 if frameworks else 0.5,
+            "infrastructure": 1.0 if (infrastructure.has_docker or infrastructure.has_compose) else 0.8,
+            "testing": 1.0 if test_suites else 0.5,
+            "interfaces": 1.0 if interfaces.rest_endpoints else 0.7,
+        }
+
         profile = ProjectProfile(
+            schema_version="2.0.0",
             project_name=name,
             root_path=str(self.workspace_root),
             tree_hash=tree_hash,
@@ -87,10 +112,16 @@ class ProjectDiscoveryEngine:
             infrastructure=infrastructure,
             interfaces=interfaces,
             test_suites=test_suites,
+            capabilities=capabilities,
+            active_adapters=[a.adapter_id for a in active_adapters],
+            components=components,
+            confidence_scores=confidences,
             metadata={
                 "total_languages": len(languages),
                 "total_frameworks": len(frameworks),
                 "total_test_suites": len(test_suites),
+                "total_capabilities": len(capabilities),
+                "total_adapters_active": len(active_adapters),
             }
         )
 
@@ -98,6 +129,28 @@ class ProjectDiscoveryEngine:
             self._persist_profile_artifacts(profile)
 
         return profile
+
+    def _detect_components(self) -> List[Dict[str, Any]]:
+        """Identifies sub-services or monorepo packages across directory roots."""
+        components = []
+        try:
+            for item in self.workspace_root.iterdir():
+                if not item.is_dir() or item.name.startswith((".", "node_modules", "vendor", "dist", "build")):
+                    continue
+                # Check if this subfolder is an independent component
+                sub_manifests = []
+                for m in ("package.json", "pyproject.toml", "go.mod", "Cargo.toml", "pom.xml", "Dockerfile"):
+                    if (item / m).is_file():
+                        sub_manifests.append(m)
+                if sub_manifests:
+                    components.append({
+                        "name": item.name,
+                        "path": str(item.relative_to(self.workspace_root)),
+                        "manifests": sub_manifests,
+                    })
+        except Exception:
+            pass
+        return components
 
     def _persist_profile_artifacts(self, profile: ProjectProfile) -> None:
         """Saves all required machine-readable JSON files in .aegis/."""
@@ -114,6 +167,9 @@ class ProjectDiscoveryEngine:
             "languages": [l.model_dump() for l in profile.languages],
             "frameworks": [f.model_dump() for f in profile.frameworks],
             "infrastructure": profile.infrastructure.model_dump(),
+            "capabilities": [c.model_dump() for c in profile.capabilities],
+            "active_adapters": profile.active_adapters,
+            "components": profile.components,
         }
         self.storage.save_json("architecture.json", architecture_data)
 

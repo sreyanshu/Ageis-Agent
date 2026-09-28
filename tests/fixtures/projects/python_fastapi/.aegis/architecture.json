@@ -45,5 +45,145 @@
     "detected_queues": [
       "Redis"
     ]
-  }
+  },
+  "capabilities": [
+    {
+      "id": "cap_lang_python",
+      "type": "LANGUAGE",
+      "name": "Python",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Found Python manifest: pyproject.toml",
+        "Discovered 6 Python source files"
+      ],
+      "source": "PythonAdapter",
+      "discovered_at": 1790528205.434436,
+      "metadata": {}
+    },
+    {
+      "id": "cap_build_pyproject",
+      "type": "BUILD",
+      "name": "pyproject.toml",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "pyproject.toml build configuration"
+      ],
+      "source": "PythonAdapter",
+      "discovered_at": 1790528205.4344451,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_unit_pytest",
+      "type": "TEST_UNIT",
+      "name": "Pytest Unit Testing",
+      "status": "AVAILABLE",
+      "confidence": 0.85,
+      "evidence": [
+        "Discovered 2 Python test files (5 test cases)"
+      ],
+      "source": "PytestTestAdapter",
+      "discovered_at": 1790528205.43464,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_integration_pytest",
+      "type": "TEST_INTEGRATION",
+      "name": "Pytest Integration Testing",
+      "status": "AVAILABLE",
+      "confidence": 0.85,
+      "evidence": [
+        "Discovered 2 Python test files (5 test cases)"
+      ],
+      "source": "PytestTestAdapter",
+      "discovered_at": 1790528205.434641,
+      "metadata": {}
+    },
+    {
+      "id": "cap_fw_fastapi",
+      "type": "FRAMEWORK",
+      "name": "FastAPI",
+      "status": "SUPPORTED",
+      "confidence": 0.95,
+      "evidence": [
+        "Detected FastAPI via import/package manifest"
+      ],
+      "source": "WebFrameworkAdapter",
+      "discovered_at": 1790528205.434738,
+      "metadata": {}
+    },
+    {
+      "id": "cap_infra_docker",
+      "type": "CONTAINER",
+      "name": "Docker",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "Dockerfile present in workspace"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.434892,
+      "metadata": {}
+    },
+    {
+      "id": "cap_infra_compose",
+      "type": "CONTAINER",
+      "name": "Docker Compose",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "docker-compose.yml"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.4348931,
+      "metadata": {}
+    },
+    {
+      "id": "cap_db_postgresql",
+      "type": "DATABASE",
+      "name": "PostgreSQL",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "PostgreSQL referenced in infrastructure config"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.434895,
+      "metadata": {}
+    },
+    {
+      "id": "cap_db_redis",
+      "type": "DATABASE",
+      "name": "Redis",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Redis referenced in infrastructure config"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.4348958,
+      "metadata": {}
+    },
+    {
+      "id": "cap_cache_redis",
+      "type": "CACHE",
+      "name": "Redis",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Redis referenced in configuration"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.434897,
+      "metadata": {}
+    }
+  ],
+  "active_adapters": [
+    "lang_python",
+    "test_pytest",
+    "fw_web",
+    "infra_docker"
+  ],
+  "components": []
 }

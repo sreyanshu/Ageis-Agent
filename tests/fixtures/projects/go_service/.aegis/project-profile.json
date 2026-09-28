@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "project_name": "go_service",
   "root_path": "/Users/apple/Ageis Agent/tests/fixtures/projects/go_service",
-  "discovered_at": 1790510482.896186,
+  "discovered_at": 1790528205.446635,
   "tree_hash": "9cf59a216edba7ced08a3b13f9f236e0c60bc2b421598258dc1f07380800b1e0",
   "languages": [
     {
@@ -73,9 +73,93 @@
       ]
     }
   ],
+  "capabilities": [
+    {
+      "id": "cap_lang_go",
+      "type": "LANGUAGE",
+      "name": "Go",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Found Go module manifest: go.mod",
+        "Discovered 5 Go source files"
+      ],
+      "source": "GoAdapter",
+      "discovered_at": 1790528205.44576,
+      "metadata": {}
+    },
+    {
+      "id": "cap_build_go_modules",
+      "type": "BUILD",
+      "name": "Go Modules",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "go.mod module manifest"
+      ],
+      "source": "GoAdapter",
+      "discovered_at": 1790528205.445766,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_unit_gotest",
+      "type": "TEST_UNIT",
+      "name": "Go Unit & Integration Testing",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "Discovered 1 Go test files (1 test functions)"
+      ],
+      "source": "GoTestAdapter",
+      "discovered_at": 1790528205.44629,
+      "metadata": {}
+    },
+    {
+      "id": "cap_fw_gin",
+      "type": "FRAMEWORK",
+      "name": "Gin",
+      "status": "SUPPORTED",
+      "confidence": 0.95,
+      "evidence": [
+        "Detected Gin via import/package manifest"
+      ],
+      "source": "WebFrameworkAdapter",
+      "discovered_at": 1790528205.4464011,
+      "metadata": {}
+    },
+    {
+      "id": "cap_infra_docker",
+      "type": "CONTAINER",
+      "name": "Docker",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "Dockerfile present in workspace"
+      ],
+      "source": "DockerInfrastructureAdapter",
+      "discovered_at": 1790528205.446544,
+      "metadata": {}
+    }
+  ],
+  "active_adapters": [
+    "lang_go",
+    "test_gotest",
+    "fw_web",
+    "infra_docker"
+  ],
+  "components": [],
+  "confidence_scores": {
+    "languages": 1.0,
+    "frameworks": 1.0,
+    "infrastructure": 1.0,
+    "testing": 1.0,
+    "interfaces": 0.7
+  },
   "metadata": {
     "total_languages": 1,
     "total_frameworks": 1,
-    "total_test_suites": 1
+    "total_test_suites": 1,
+    "total_capabilities": 5,
+    "total_adapters_active": 4
   }
 }

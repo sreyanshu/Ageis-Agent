@@ -66,6 +66,26 @@ def build_parser() -> argparse.ArgumentParser:
 
     # init
     p_init = subparsers.add_parser("init", parents=[common_parser], help="Initialize Aegis in current workspace (.aegis/)")
+    p_init.add_argument("--name", help="Custom project name override")
+
+    # project
+    p_proj = subparsers.add_parser("project", parents=[common_parser], help="Display canonical project profile and discovered capabilities")
+
+    # capabilities
+    p_caps = subparsers.add_parser("capabilities", parents=[common_parser], help="List all detected project capabilities with evidence")
+
+    # adapters
+    p_adp = subparsers.add_parser("adapters", parents=[common_parser], help="List all registered technology adapters and their status")
+
+    # check
+    p_chk = subparsers.add_parser("check", parents=[common_parser], help="Run universal end-to-end quality and release verification")
+    p_chk.add_argument("--changed-only", action="store_true", default=True, help="Only validate impacted surfaces")
+    p_chk.add_argument("--all", action="store_true", help="Validate all test suites")
+    p_chk.add_argument("--dry-run", action="store_true", help="Simulate execution without running external commands")
+    p_chk.add_argument("--ci", action="store_true", help="Run in strict CI mode")
+
+    # release
+    p_rel_alias = subparsers.add_parser("release", parents=[common_parser], help="Evaluate deterministic release readiness policy gate")
 
     # discover
     p_disc = subparsers.add_parser("discover", parents=[common_parser], help="Discover languages, frameworks, build tools, infra, APIs, and tests")
@@ -153,15 +173,140 @@ def main(args: Optional[List[str]] = None) -> int:
 
     try:
         if parsed.command == "init":
+            custom_name = getattr(parsed, "name", None)
+            if custom_name:
+                engine.config.project.name = custom_name
             cfg_path = engine.init_workspace()
+            summary = engine.get_init_summary()
             if parsed.json:
-                print(json.dumps({"status": "initialized", "config_file": str(cfg_path), "workspace": str(workspace_path)}))
+                print(json.dumps({
+                    "status": "initialized",
+                    "config_file": str(cfg_path),
+                    "workspace": str(workspace_path),
+                    "summary": summary,
+                }, indent=2))
             else:
                 print_banner()
-                print(f"[+] Initialized Aegis workspace at: {workspace_path}")
-                print(f"[+] Created configuration: {cfg_path}")
-                print(f"[+] Populated initial project profile and maps in .aegis/")
+                print("=" * 60)
+                print("AEGIS PROJECT INITIALIZATION")
+                print("=" * 60)
+                print(f"\nProject")
+                print(f"  Name: {summary['project_name']}")
+                print(f"  Root: {summary['root_path']}")
+
+                print(f"\nDetected Languages")
+                for lang in summary["languages"]:
+                    print(f"  ✓ {lang}")
+                if not summary["languages"]:
+                    print("  - None detected")
+
+                print(f"\nDetected Frameworks")
+                for fw in summary["frameworks"]:
+                    print(f"  ✓ {fw}")
+                if not summary["frameworks"]:
+                    print("  - None detected")
+
+                print(f"\nDetected Infrastructure")
+                infra = summary["infrastructure"]
+                if infra.get("has_docker"):
+                    print(f"  ✓ Docker ({infra.get('dockerfiles', 1)} files)")
+                if infra.get("has_compose"):
+                    print(f"  ✓ Docker Compose ({infra.get('compose_files', 1)} files)")
+                for db in infra.get("databases", []):
+                    print(f"  ✓ {db}")
+                for q in infra.get("queues", []):
+                    print(f"  ✓ {q}")
+                for ci in infra.get("ci_providers", []):
+                    print(f"  ✓ {ci}")
+
+                print(f"\nDetected Test Systems")
+                for ts in summary["test_systems"]:
+                    print(f"  ✓ {ts}")
+                if not summary["test_systems"]:
+                    print("  - None detected")
+
+                print(f"\nDetected API Surface")
+                api = summary["api_surface"]
+                if api.get("rest_endpoints", 0) > 0:
+                    print(f"  ✓ REST ({api['rest_endpoints']} endpoints)")
+                if api.get("has_openapi"):
+                    print("  ✓ OpenAPI")
+                if api.get("has_graphql"):
+                    print("  ✓ GraphQL")
+                if api.get("has_grpc"):
+                    print("  ✓ gRPC")
+
+                print(f"\nExisting Tests")
+                print(f"  ✓ {summary['total_estimated_tests']} tests discovered across {summary['discovered_test_files']} files")
+
+                print(f"\nArchitecture")
+                arch = summary["architecture"]
+                print(f"  ✓ {arch['symbols_indexed']} symbols indexed")
+                print(f"  ✓ {arch['dependency_edges']} dependency edges")
+                print(f"  ✓ {api['rest_endpoints']} API routes")
+
+                print("\n[+] Aegis initialization complete.")
             return 0
+
+        elif parsed.command == "project":
+            profile = engine.discover()
+            if parsed.json:
+                print(profile.model_dump_json(indent=2))
+            else:
+                print_banner()
+                print(f"[*] Canonical Project Profile: {profile.project_name}")
+                print(f"    - Schema Version: {profile.schema_version}")
+                print(f"    - Primary Lang  : {profile.primary_language or 'Unknown'}")
+                print(f"    - Capabilities  : {len(profile.capabilities)} detected")
+                print(f"    - Active Adapters: {', '.join(profile.active_adapters) or 'None'}")
+                if profile.components:
+                    print(f"    - Monorepo Components: {len(profile.components)}")
+                    for comp in profile.components:
+                        print(f"      • {comp['name']} ({comp['path']})")
+            return 0
+
+        elif parsed.command == "capabilities":
+            caps = engine.list_capabilities()
+            if parsed.json:
+                print(json.dumps([c.model_dump() for c in caps], indent=2))
+            else:
+                print_banner()
+                print(f"[*] Project Capabilities ({len(caps)} detected):")
+                for c in caps:
+                    ev = f" | {c.evidence[0]}" if c.evidence else ""
+                    print(f"    • [{c.type.value:<16}] {c.name:<28} ({c.status.value}, conf: {c.confidence:.2f}){ev}")
+            return 0
+
+        elif parsed.command == "adapters":
+            adps = engine.list_adapters()
+            if parsed.json:
+                print(json.dumps(adps, indent=2))
+            else:
+                print_banner()
+                print(f"[*] Universal Technology Adapters ({len(adps)} registered):")
+                for a in adps:
+                    status = "[ACTIVE]" if a["active"] else "[INACTIVE]"
+                    print(f"    • {status:<10} {a['name']:<35} ({a['category']}, v{a['version']})")
+            return 0
+
+        elif parsed.command == "check":
+            changed_only = not getattr(parsed, "all", False)
+            dry_run = getattr(parsed, "dry_run", False)
+            res = engine.check(changed_only=changed_only, dry_run=dry_run, ci=getattr(parsed, "ci", False))
+            if parsed.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print_banner()
+                print("=" * 60)
+                print(f"AEGIS QUALITY & RELEASE CHECK: {res['release_verdict']}")
+                print("=" * 60)
+                print(f"[*] Project        : {res['project_name']}")
+                print(f"[*] Risk Level     : {res['risk_level']}")
+                print(f"[*] Tests Executed : {res['tests_passed']}/{res['tests_executed']} passed")
+                print(f"[*] Release Verdict: {res['release_verdict']}")
+                for r in res.get("reasons", []):
+                    print(f"    • {r}")
+            return 0 if res["release_verdict"] in ("READY", "REQUIRES_REVIEW") else 1
 
         elif parsed.command == "discover":
             profile = engine.discover(project_name=getattr(parsed, "name", None))
@@ -588,7 +733,7 @@ def main(args: Optional[List[str]] = None) -> int:
                 print(f"[*] Tests Passed : {report_data.get('passed')}/{report_data.get('total_tests')}")
             return 0
 
-        elif parsed.command == "release-check":
+        elif parsed.command in ("release", "release-check"):
             report_data = engine.storage.load_json("report.json")
             if not report_data:
                 # Run fresh test pass first if no previous report exists

@@ -6,26 +6,39 @@
       "test_files": [
         "tests/fixtures/projects/python_fastapi/tests/test_api.py",
         "tests/fixtures/projects/python_fastapi/tests/test_service.py",
+        "tests/test_accessibility.py",
         "tests/test_adaptive_planner.py",
+        "tests/test_adaptive_selection_v2.py",
         "tests/test_ast_indexers.py",
         "tests/test_change_impact.py",
         "tests/test_cli.py",
         "tests/test_cli_phase2.py",
         "tests/test_cli_phase3.py",
+        "tests/test_cli_phase4.py",
+        "tests/test_cli_phase5.py",
         "tests/test_config.py",
         "tests/test_dag_scheduler.py",
         "tests/test_discovery.py",
         "tests/test_evidence.py",
         "tests/test_execution_dag.py",
         "tests/test_executor.py",
+        "tests/test_failure_intelligence.py",
+        "tests/test_flakiness_and_effectiveness.py",
         "tests/test_hashing.py",
+        "tests/test_history_store.py",
         "tests/test_orchestrator.py",
+        "tests/test_performance.py",
         "tests/test_project_graph.py",
+        "tests/test_quality_contracts.py",
+        "tests/test_quality_planner_and_gate.py",
+        "tests/test_redundancy_and_correlations.py",
         "tests/test_risk_engine.py",
         "tests/test_runners.py",
-        "tests/test_symbol_index.py"
+        "tests/test_security_sarif.py",
+        "tests/test_symbol_index.py",
+        "tests/test_ux_heuristics.py"
       ],
-      "test_count_estimate": 47,
+      "test_count_estimate": 80,
       "test_dirs": [
         "tests",
         "tests/fixtures/projects/python_fastapi/tests"
@@ -55,5 +68,5 @@
       ]
     }
   ],
-  "total_estimated_tests": 51
+  "total_estimated_tests": 84
 }

@@ -59,5 +59,161 @@
     ],
     "detected_databases": [],
     "detected_queues": []
-  }
+  },
+  "capabilities": [
+    {
+      "id": "cap_lang_typescript",
+      "type": "LANGUAGE",
+      "name": "TypeScript",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Found Node manifest/config: package.json",
+        "Discovered 4 TypeScript source files",
+        "Discovered 2 JavaScript source files"
+      ],
+      "source": "JavaScriptTypeScriptAdapter",
+      "discovered_at": 1790528205.440653,
+      "metadata": {}
+    },
+    {
+      "id": "cap_lang_javascript",
+      "type": "LANGUAGE",
+      "name": "JavaScript",
+      "status": "SUPPORTED",
+      "confidence": 1.0,
+      "evidence": [
+        "Found Node manifest/config: package.json",
+        "Discovered 4 TypeScript source files",
+        "Discovered 2 JavaScript source files"
+      ],
+      "source": "JavaScriptTypeScriptAdapter",
+      "discovered_at": 1790528205.440655,
+      "metadata": {}
+    },
+    {
+      "id": "cap_build_npm",
+      "type": "BUILD",
+      "name": "Node.js (npm)",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "package.json and npm lockfile"
+      ],
+      "source": "JavaScriptTypeScriptAdapter",
+      "discovered_at": 1790528205.440665,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_unit_js",
+      "type": "TEST_UNIT",
+      "name": "Jest Unit Testing",
+      "status": "AVAILABLE",
+      "confidence": 0.85,
+      "evidence": [
+        "Discovered 2 JS/TS test files (3 test cases)"
+      ],
+      "source": "VitestJestAdapter",
+      "discovered_at": 1790528205.440883,
+      "metadata": {}
+    },
+    {
+      "id": "cap_test_ui_js",
+      "type": "TEST_UI",
+      "name": "Jest Component Testing",
+      "status": "AVAILABLE",
+      "confidence": 0.85,
+      "evidence": [
+        "Discovered 2 JS/TS test files (3 test cases)"
+      ],
+      "source": "VitestJestAdapter",
+      "discovered_at": 1790528205.440885,
+      "metadata": {}
+    },
+    {
+      "id": "cap_fw_react",
+      "type": "TEST_UI",
+      "name": "React",
+      "status": "SUPPORTED",
+      "confidence": 0.95,
+      "evidence": [
+        "Detected React via import/package manifest"
+      ],
+      "source": "WebFrameworkAdapter",
+      "discovered_at": 1790528205.441002,
+      "metadata": {}
+    },
+    {
+      "id": "cap_fw_express",
+      "type": "FRAMEWORK",
+      "name": "Express",
+      "status": "SUPPORTED",
+      "confidence": 0.95,
+      "evidence": [
+        "Detected Express via import/package manifest"
+      ],
+      "source": "WebFrameworkAdapter",
+      "discovered_at": 1790528205.441004,
+      "metadata": {}
+    },
+    {
+      "id": "cap_quality_security_sarif",
+      "type": "SECURITY",
+      "name": "SARIF / Static Security Analysis",
+      "status": "AVAILABLE",
+      "confidence": 0.9,
+      "evidence": [
+        "Found GitHub Actions CI workflows (1 workflows)"
+      ],
+      "source": "QualityToolAdapter",
+      "discovered_at": 1790528205.441105,
+      "metadata": {}
+    },
+    {
+      "id": "cap_quality_a11y_wcag",
+      "type": "ACCESSIBILITY",
+      "name": "WCAG Accessibility Audits",
+      "status": "AVAILABLE",
+      "confidence": 0.9,
+      "evidence": [
+        "Aegis native WCAG automated evaluator"
+      ],
+      "source": "QualityToolAdapter",
+      "discovered_at": 1790528205.4411058,
+      "metadata": {}
+    },
+    {
+      "id": "cap_quality_perf_budgets",
+      "type": "PERFORMANCE",
+      "name": "Performance Baseline & Budgets",
+      "status": "AVAILABLE",
+      "confidence": 0.9,
+      "evidence": [
+        "Aegis statistical performance engine"
+      ],
+      "source": "QualityToolAdapter",
+      "discovered_at": 1790528205.441107,
+      "metadata": {}
+    },
+    {
+      "id": "cap_ci_github_actions",
+      "type": "CI",
+      "name": "GitHub Actions",
+      "status": "AVAILABLE",
+      "confidence": 1.0,
+      "evidence": [
+        "GitHub Actions workflows detected"
+      ],
+      "source": "QualityToolAdapter",
+      "discovered_at": 1790528205.441113,
+      "metadata": {}
+    }
+  ],
+  "active_adapters": [
+    "lang_js_ts",
+    "test_vitest_jest",
+    "fw_web",
+    "quality_tools"
+  ],
+  "components": []
 }

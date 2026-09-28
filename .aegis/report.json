@@ -1,9 +1,9 @@
 {
-  "report_id": "rep_1790509071916_993ce287",
-  "correlation_id": "corr_1790509071914_e4483820",
+  "report_id": "rep_1790510150507_d3ac93eb",
+  "correlation_id": "corr_1790510150505_d179683e",
   "project_name": "Ageis Agent",
-  "created_at": 1790509071.916037,
-  "tree_hash": "5bd0b30fad702435e6ccf98cf02110e8e4e85f790273e382568f4fc71dbee6e1",
+  "created_at": 1790510150.507313,
+  "tree_hash": "ad975f1a4ba3f9c0e67fa3f171b80710f508852ac42480923e833c8f8c0f7829",
   "total_tests": 16,
   "passed": 16,
   "failed": 0,
@@ -398,37 +398,55 @@
   ],
   "failure_fingerprints": [],
   "release_assessment": {
-    "verdict": "REQUIRES_REVIEW",
-    "generated_at": 1790509071.916404,
+    "verdict": "BLOCKED",
+    "generated_at": 1790510150.507956,
     "policy_checks": [
       {
-        "policy_name": "critical_tests_must_pass",
+        "policy_name": "functional_tests_must_pass",
         "passed": true,
-        "details": "All executed tests passed successfully.",
+        "details": "Passed: 16/16 (Failed: 0, Errors: 0)",
         "evidence_ref": null
       },
       {
-        "policy_name": "zero_execution_errors",
+        "policy_name": "require_real_execution_mode",
         "passed": true,
-        "details": "Zero runner execution errors or timeouts.",
+        "details": "All required validations executed in authoritative REAL mode.",
+        "evidence_ref": null
+      },
+      {
+        "policy_name": "zero_unwaived_critical_security",
+        "passed": true,
+        "details": "Un-waived security findings: Critical=0 (max: 0), High=0 (max: 0)",
+        "evidence_ref": null
+      },
+      {
+        "policy_name": "zero_unwaived_critical_accessibility",
+        "passed": false,
+        "details": "Un-waived critical WCAG violations: 1 (max: 0)",
+        "evidence_ref": null
+      },
+      {
+        "policy_name": "performance_regression_boundary",
+        "passed": true,
+        "details": "No significant performance regression detected beyond tolerance.",
         "evidence_ref": null
       },
       {
         "policy_name": "require_human_approval",
         "passed": true,
-        "details": "Release meets automated criteria; awaiting required human approval.",
+        "details": "Automated criteria evaluated; awaiting final human approval confirmation.",
         "evidence_ref": null
       }
     ],
     "reasons": [
-      "Automated policies passed. Requires final human confirmation per release policy."
+      "Accessibility policy violation: 1 critical WCAG violations detected."
     ],
     "total_tests": 16,
     "passed_tests": 16,
     "failed_tests": 0,
-    "critical_failures": 0,
+    "critical_failures": 1,
     "security_vulnerabilities": 0,
-    "accessibility_score": 1.0,
+    "accessibility_score": 0.8,
     "performance_regression_pct": 0.0
   },
   "metadata": {}
